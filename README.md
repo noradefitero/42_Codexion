@@ -33,6 +33,7 @@ This work is published under the terms of <a href="LICENSE"><b>MIT license</b></
 - [Multithreading in C at Geeksforgeeks](https://www.geeksforgeeks.org/c/multithreading-in-c/)
 - [Thread Management Functions in C at Geeksforgeeks](https://www.geeksforgeeks.org/c/thread-functions-in-c-c/)
 - [Mastering Concurrency in C with Pthreads: A Comprehensive Guide at dev.to (Emanuel Gustafzon)](https://dev.to/emanuelgustafzon/mastering-concurrency-in-c-with-pthreads-a-comprehensive-guide-56je)
+- [Mutexes in C at Medium (Sherniiazov Daniiar)](https://medium.com/@sherniiazov.da/mutexes-in-c-ac2b0f1a6d34)
 
 ### C OOP
 - [Object-Oriented Programming (OOP) in C at Codementor (Michael Safyan)](https://www.codementor.io/@michaelsafyan/object-oriented-programming-in-c-du1081gw2)
