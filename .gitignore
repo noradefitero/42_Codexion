@@ -1,4 +1,5 @@
-# ---> C
+**.DS_STORE
+
 # Prerequisites
 *.d
 
@@ -36,6 +37,7 @@
 *.i*86
 *.x86_64
 *.hex
+codexion
 
 # Debug files
 *.dSYM/
@@ -55,3 +57,4 @@ dkms.conf
 # debug information files
 *.dwo
 
+*subject.pdf
