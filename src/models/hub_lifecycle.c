@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 08:39:26 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/16 22:27:20 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/17 00:23:20 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ t_coder *NONNULL *NULLABLE	hub__create_coders(
 			return (NULL);
 		}
 		coder__set_left_usb(buf[i], usbs[i]);
-		coder__set_right_usb(buf[i], usbs[i]);
+		coder__set_right_usb(buf[i], usbs[(i + 1) % n_coders]);
 		i++;
 	}
 	return (buf);
