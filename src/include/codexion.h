@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/03 04:42:32 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/14 07:12:14 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/17 08:08:32 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ typedef struct s_config
 	int			dongle_cooldown;
 	t_scheduler	scheduler;
 }	t_config;
+
+typedef long long	t_ms;
 
 // typedef struct s_data
 // {
