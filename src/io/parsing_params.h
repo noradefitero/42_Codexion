@@ -1,29 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   commands.h                                         :+:      :+:    :+:   */
+/*   parsing_params.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/30 22:32:34 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/17 01:31:12 by dde-fite         ###   ########.fr       */
+/*   Created: 2026/08/17 01:23:48 by dde-fite          #+#    #+#             */
+/*   Updated: 2026/08/17 01:33:05 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COMMANDS_H
-# define COMMANDS_H
+#ifndef PARSING_PARAMS_H
+# define PARSING_PARAMS_H
 
-# include "../io/print.h"
 # include "codexion.h"
 
-# include <stdio.h>
-# include <string.h>
+# include <stdlib.h>
+# include <stdbool.h>
 
-/* COMMANDS */
-# include "commands_help.h"
+t_scheduler	str_to_scheduler(char const *s);
+int			parse_arguments(t_config *config, int argc, char *argv[]);
 
-int	version(void);
-
-int	process_command(char *argv[]);
-
-#endif /* COMMANDS_H */
+#endif /* PARSING_PARAMS_H */
