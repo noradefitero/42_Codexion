@@ -1,23 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   io_wrappers.h                                      :+:      :+:    :+:   */
+/*   print.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/09 20:13:26 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/11 19:56:41 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/17 01:28:41 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef IO_WRAPPERS_H
-# define IO_WRAPPERS_H
+#ifndef PRINT_H
+# define PRINT_H
 
 # include "../commands/commands_help.h"
 
+# include <pthread.h>
 # include <stdbool.h>
 # include <stdio.h>
 
-int	print_error(char *msg, bool print_help);
+typedef enum e_log_mess
+{
+	TAKEN_DONLE,
+	COMPILING,
+	DEBUGGING,
+	REFACTORING,
+	BURNED
+}	t_log_mess;
 
-#endif /* IO_WRAPPERS_H */
+# define TAKEN_DONGLE_MESS "has taken a dongle"
+# define COMPILING_MESS "is compiling"
+# define DEBUGGING_MESS "is debugging"
+# define REFACTORING_MESS "is refactoring"
+# define BURNED_MESS "burned out"
+
+int	print_error(char *msg, bool print_help);
+int	log_state(int timestamp, int n_coder, t_log_mess state);
+
+#endif /* PRINT_H */
