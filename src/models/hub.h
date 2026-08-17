@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/12 03:22:46 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/16 22:14:19 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/17 08:07:18 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,24 @@
 
 typedef struct s_hub
 {
+	t_config					__config;
 	t_coder *NULLABLE *NULLABLE	__coders; /* Array of coders [*1, *2, NULL] */
 	t_usb *NULLABLE *NULLABLE	__usbs;
-	size_t						__n_coders;
+	t_ms						__initial_time;
 }	t_hub;
 
-int							hub__init(t_hub *NONNULL self, size_t n_coders);
-t_hub *NULLABLE				hub__create(size_t n_coders);
+int							hub__init(
+								t_hub *NONNULL self,
+								t_config *NONNULL config
+								);
+t_hub *NULLABLE				hub__create(t_config *NONNULL config);
 void						hub__reset(t_hub *NONNULL self);
 void						hub__destroy(t_hub *NONNULL hub);
 
 /* LIFECYCLE */
-t_usb *NONNULL *NULLABLE		hub__create_usbs(size_t n_usbs);
+t_usb *NONNULL *NULLABLE		hub__create_usbs(t_hub *NONNULL self);
 t_coder *NONNULL *NULLABLE	hub__create_coders(
-								size_t n_coders,
-								t_usb *NULLABLE *NONNULL usbs
+								t_hub *NONNULL self
 								);
 void						hub__destroy_usbs(
 								t_usb *NONNULL *NONNULL usbs,
