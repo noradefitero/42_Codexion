@@ -6,26 +6,41 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 06:59:43 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/16 01:22:06 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/20 07:39:29 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "coder.h"
 
-int	coder__init(t_coder *self)
+int	coder__init(
+	t_coder *NONNULL self,
+	int id,
+	t_config *NONNULL config,
+	t_logger *NULLABLE logger
+)
 {
-	self->__state = UNDEFINED;
+	self->__time_to_compile = config->time_to_compile;
+	self->__time_to_debug = config->time_to_debug;
+	self->__time_to_refactor = config->time_to_refactor;
+	self->__number_of_compiles_required = config->number_of_compiles_required;
+	self->__id = id;
+	self->__state = COMPILE;
+	self->__logger = logger;
 	return (0);
 }
 
-t_coder	*coder__create(void)
+t_coder	*coder__create(
+	int id,
+	t_config *NULLABLE config,
+	t_logger *NULLABLE logger
+)
 {
 	t_coder	*result;
 
 	result = (t_coder *)ft_calloc(1, sizeof(t_coder));
 	if (!result)
 		return (NULL);
-	if (coder__init(result))
+	if (coder__init(result, id, config, logger))
 	{
 		coder__destroy(result);
 		return (NULL);
@@ -35,7 +50,11 @@ t_coder	*coder__create(void)
 
 void	coder__reset(t_coder *self)
 {
-	self->__state = self->__state;
+	if (self->__thread_active)
+	{
+		coder__exit_thread(self);
+		coder__join_thread(self);
+	}
 }
 
 void	coder__destroy(t_coder *coder)
