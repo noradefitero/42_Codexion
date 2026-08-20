@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/18 00:00:59 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 06:23:23 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/20 08:36:34 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	logger__init(t_logger *NONNULL self)
 	self->__thread_active = false;
 	self->__exit_flag = false;
 	self->__queue_active = true;
+	self->__cond_initialized = false;
 	self->__mutex_initialized = false;
 	if (pthread_mutex_init(&self->__mutex, NULL))
 	{
@@ -26,6 +27,12 @@ int	logger__init(t_logger *NONNULL self)
 		return (1);
 	}
 	self->__mutex_initialized = true;
+	if (pthread_cond_init(&self->__cond, NULL))
+	{
+		logger__reset(self);
+		return (1);
+	}
+	self->__cond_initialized = true;
 	return (0);
 }
 
@@ -52,6 +59,11 @@ void	logger__reset(t_logger *NONNULL self)
 	{
 		pthread_mutex_destroy(&self->__mutex);
 		self->__mutex_initialized = false;
+	}
+	if (self->__cond_initialized)
+	{
+		pthread_cond_destroy(&self->__cond);
+		self->__cond_initialized = false;
 	}
 	if (self->__queue)
 		logger__clear_queue(self);

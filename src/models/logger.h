@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/17 23:54:24 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 07:07:31 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/20 08:28:23 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ typedef struct s_logger
 	bool						__exit_flag;
 	pthread_mutex_t				__mutex;
 	bool						__mutex_initialized;
-	// pthread_cond_t
+	pthread_cond_t				__cond;
+	bool						__cond_initialized;
 	t_log *NULLABLE				__queue;
 	t_log *NULLABLE				__queue_tail;
 	bool						__queue_active;

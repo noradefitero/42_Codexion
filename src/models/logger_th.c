@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/18 00:06:46 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/19 02:06:52 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/20 08:50:08 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ int	logger__exit_thread(t_logger *NONNULL self)
 	if (self->__thread_active)
 	{
 		self->__exit_flag = true;
+		if (self->__cond_initialized)
+			pthread_cond_broadcast(&self->__cond);
 		return (logger__join_thread(self));
 	}
 	return (0);

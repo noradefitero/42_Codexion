@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/19 01:10:58 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 07:07:19 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/20 08:49:49 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int	logger__add_to_queue(
 	else
 		self->__queue = new;
 	self->__queue_tail = new;
+	pthread_cond_signal(&self->__cond);
 	pthread_mutex_unlock(&self->__mutex);
 	return (0);
 }
@@ -53,13 +54,19 @@ t_log *NULLABLE	logger__pop_queue(t_logger *NONNULL self)
 {
 	t_log	*ret;
 
-	pthread_mutex_lock(&self->__mutex);
-	ret = self->__queue;
-	if (!ret)
-	{
-		pthread_mutex_unlock(&self->__mutex);
+	if (!self->__queue_active)
 		return (NULL);
+	pthread_mutex_lock(&self->__mutex);
+	while (!self->__queue)
+	{
+		if (!self->__queue_active || self->__exit_flag)
+		{
+			pthread_mutex_unlock(&self->__mutex);
+			return (NULL);
+		}
+		pthread_cond_wait(&self->__cond, &self->__mutex);
 	}
+	ret = self->__queue;
 	self->__queue = ret->next;
 	if (!self->__queue)
 		self->__queue_tail = NULL;
