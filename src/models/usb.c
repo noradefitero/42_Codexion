@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 06:59:43 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/17 08:07:02 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/17 22:50:49 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,11 @@
 
 int	usb__init(
 	t_usb *NONNULL self,
-	t_config *NONNULL config,
-	t_ms *NONNULL initial_time
+	t_config *NONNULL config
 )
 {
 	self->__dongle_cooldown = config->dongle_cooldown;
 	self->__scheduler = config->scheduler;
-	self->__initial_time = initial_time;
 	if (pthread_mutex_init(&self->__mutex, NULL))
 	{
 		usb__reset(self);
@@ -36,14 +34,14 @@ int	usb__init(
 	return (0);
 }
 
-t_usb *NULLABLE	usb__create(t_config *NONNULL config, int *NONNULL initial_time)
+t_usb *NULLABLE	usb__create(t_config *NONNULL config)
 {
 	t_usb	*result;
 
 	result = (t_usb *)ft_calloc(1, sizeof(t_usb));
 	if (!result)
 		return (NULL);
-	if (usb__init(result, config, initial_time))
+	if (usb__init(result, config))
 	{
 		usb__destroy(result);
 		return (NULL);
