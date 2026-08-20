@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 01:58:07 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 06:39:36 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/20 09:14:46 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ int	main(int argc, char *argv[])
 		return (process_command(argv));
 	if (parse_arguments(&config, argc, argv))
 		return (1);
+	if (config.number_of_coders == 0 || config.number_of_compiles_required == 0)
+		return (0);
 	if (hub__init(&hub, &config))
 		return (print_error("ERROR INITIALIZING HUB", false));
 	if (hub__coders_map(&hub, coder__init_thread))
