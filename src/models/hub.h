@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/12 03:22:46 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/17 08:07:18 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/20 07:12:37 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include "annotations.h"
 # include "coder.h"
 # include "usb.h"
+# include "monitor.h"
+# include "logger.h"
 # include "../utils/ft/ft.h"
 
 typedef struct s_hub
@@ -23,7 +25,8 @@ typedef struct s_hub
 	t_config					__config;
 	t_coder *NULLABLE *NULLABLE	__coders; /* Array of coders [*1, *2, NULL] */
 	t_usb *NULLABLE *NULLABLE	__usbs;
-	t_ms						__initial_time;
+	t_monitor					__monitor;
+	t_logger					__logger;
 }	t_hub;
 
 int							hub__init(
@@ -34,9 +37,33 @@ t_hub *NULLABLE				hub__create(t_config *NONNULL config);
 void						hub__reset(t_hub *NONNULL self);
 void						hub__destroy(t_hub *NONNULL hub);
 
+/* GETTERS */
+
+static inline t_coder *NULLABLE *NULLABLE	hub__coders(
+	const t_hub *NONNULL self
+)
+{
+	return (self->__coders);
+}
+
+static inline t_usb *NULLABLE *NULLABLE	hub__usbs(const t_hub *NONNULL self)
+{
+	return (self->__usbs);
+}
+
+static inline t_monitor *NONNULL	hub__monitor(const t_hub *NONNULL self)
+{
+	return ((t_monitor *)&self->__monitor);
+}
+
+static inline t_logger *NONNULL	hub__logger(const t_hub *NONNULL self)
+{
+	return ((t_logger *)&self->__logger);
+}
+
 /* LIFECYCLE */
-t_usb *NONNULL *NULLABLE		hub__create_usbs(t_hub *NONNULL self);
-t_coder *NONNULL *NULLABLE	hub__create_coders(
+int							hub__create_usbs(t_hub *NONNULL self);
+int							hub__create_coders(
 								t_hub *NONNULL self
 								);
 void						hub__destroy_usbs(
@@ -52,9 +79,7 @@ int							hub__coders_map(
 								int (*NONNULL f)(t_coder *NONNULL)
 								);
 
-/* GETTERS */
-t_coder *NULLABLE *NULLABLE	hub__coders(const t_hub *NONNULL self);
-t_usb *NULLABLE *NULLABLE		hub__usbs(const t_hub *NONNULL self);
-size_t						hub__n_coders(const t_hub *NONNULL self);
+/* EVENTS */
+void						hub__on_burn(t_hub *NONNULL self);
 
 #endif /* HUB_H */

@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 08:39:26 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/17 07:30:40 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/20 05:57:49 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	hub__create_usbs(t_hub *NONNULL self)
 	i = 0;
 	while (i < n_usbs)
 	{
-		buf[i] = usb__create(&self->__config, &self->__initial_time);
+		buf[i] = usb__create(&self->__config);
 		if (!buf[i])
 		{
 			hub__destroy_usbs(buf, i);
@@ -39,7 +39,7 @@ int	hub__create_usbs(t_hub *NONNULL self)
 
 int	hub__create_coders(t_hub *NONNULL self)
 {
-	const t_usb		**usbs = self->__usbs;
+	const t_usb		**usbs = (const t_usb **)self->__usbs;
 	const size_t	n_coders = self->__config.number_of_coders;
 	t_coder			**buf;
 	size_t			i;
@@ -50,7 +50,7 @@ int	hub__create_coders(t_hub *NONNULL self)
 	i = 0;
 	while (i < n_coders)
 	{
-		buf[i] = coder__create(i + 1, &self->__config, self->__initial_time);
+		buf[i] = coder__create(i + 1, &self->__config, &self->__logger);
 		if (!buf[i])
 		{
 			hub__destroy_coders(buf, i);
