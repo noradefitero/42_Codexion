@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 06:59:43 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 07:39:29 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/20 08:30:52 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,12 @@ int	coder__init(
 	self->__time_to_debug = config->time_to_debug;
 	self->__time_to_refactor = config->time_to_refactor;
 	self->__number_of_compiles_required = config->number_of_compiles_required;
+	self->__compiles = 0;
 	self->__id = id;
 	self->__state = COMPILE;
 	self->__logger = logger;
+	self->__exit_thread = false;
+	self->__thread_active = false;
 	return (0);
 }
 
