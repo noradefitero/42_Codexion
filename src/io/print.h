@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/09 20:13:26 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/17 01:28:41 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/18 09:23:46 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PRINT_H
 
 # include "../commands/commands_help.h"
+# include "../utils/time.h"
 
 # include <pthread.h>
 # include <stdbool.h>
@@ -34,7 +35,7 @@ typedef enum e_log_mess
 # define REFACTORING_MESS "is refactoring"
 # define BURNED_MESS "burned out"
 
-int	print_error(char *msg, bool print_help);
-int	log_state(int timestamp, int n_coder, t_log_mess state);
+int		print_error(char *msg, bool print_help);
+void	log_state(int n_coder, t_ms tm, t_log_mess state);
 
 #endif /* PRINT_H */

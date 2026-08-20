@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/09 20:12:41 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/17 01:28:37 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/20 07:44:19 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,27 +20,27 @@ int	print_error(char *msg, bool print_help)
 	return (-1);
 }
 
-int	log_state(int timestamp, int n_coder, t_log_mess state)
+void	log_state(int n_coder, t_ms tm, t_log_mess state)
 {
-	static pthread_mutex_t	mutex;
-	static bool				mutex_initialized;
-	const char				*template = "%n %n %s";
-	int						ret;
+	static pthread_mutex_t	mutex = PTHREAD_MUTEX_INITIALIZER;
+	static bool				burned = false;
+	const char				*template = "%d %d %s\n";
 
-	ret = -1;
-	if (!mutex_initialized)
-		pthread_mutex_init(&mutex, NULL);
 	pthread_mutex_lock(&mutex);
+	if (burned)
+		return ;
 	if (state == TAKEN_DONLE)
-		ret = printf(template, timestamp, n_coder, TAKEN_DONGLE_MESS);
+		printf(template, tm, n_coder, TAKEN_DONGLE_MESS);
 	else if (state == COMPILING)
-		ret = printf(template, timestamp, n_coder, COMPILING_MESS);
+		printf(template, tm, n_coder, COMPILING_MESS);
 	else if (state == DEBUGGING)
-		ret = printf(template, timestamp, n_coder, DEBUGGING_MESS);
+		printf(template, tm, n_coder, DEBUGGING_MESS);
 	else if (state == REFACTORING)
-		ret = printf(template, timestamp, n_coder, REFACTORING_MESS);
+		printf(template, tm, n_coder, REFACTORING_MESS);
 	else if (state == BURNED)
-		ret = fprintf(stderr, template, timestamp, n_coder, BURNED_MESS);
+	{
+		fprintf(stderr, template, tm, n_coder, BURNED_MESS);
+		burned = true;
+	}
 	pthread_mutex_unlock(&mutex);
-	return (ret);
 }
