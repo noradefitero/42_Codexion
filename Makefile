@@ -23,14 +23,14 @@ SRCS = 	src/main.c \
 		src/models/logger.c \
 		src/models/logger_th.c \
 		src/models/logger_queue.c \
-		src/commands/commands.c
+		src/commands/commands.c \
 		src/commands/commands_help.c \
 		src/io/print.c \
 		src/io/parsing_params.c \
 		src/utils/time.c \
 		src/utils/ft/ft_isalpha.c \
 		src/utils/ft/ft_strisdigit.c \
-		src/utils/ft/ft_calloc.c \
+		src/utils/ft/ft_calloc.c
 OBJS = $(patsubst %.c,$(BUILD)/%.o,$(SRCS))
 
 all: $(NAME)
