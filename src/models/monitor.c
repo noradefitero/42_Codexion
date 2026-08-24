@@ -6,17 +6,17 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/18 00:00:59 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/18 09:15:51 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 06:58:50 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "monitor.h"
 
 void	monitor__init(
-		t_monitor *NONNULL self,
-		t_coder *NONNULL *NONNULL coders,
-		t_config *NONNULL config,
-		t_hub *NULLABLE hub
+	t_monitor *NONNULL self,
+	t_coder *NONNULL *NONNULL coders,
+	t_config *NONNULL config,
+	t_hub *NULLABLE hub
 )
 {
 	self->__thread_active = false;
@@ -37,7 +37,10 @@ t_monitor *NULLABLE	monitor__create(
 
 	result = (t_monitor *)ft_calloc(1, sizeof(t_monitor));
 	if (!result)
+	{
+		print_error("FAILED ALLOCATING A MONITOR INSTANCE", false);
 		return (NULL);
+	}
 	monitor__init(result, coders, config, hub);
 	return (result);
 }
