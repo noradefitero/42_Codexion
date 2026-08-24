@@ -6,13 +6,13 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/17 01:23:11 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/17 01:33:13 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/21 09:36:10 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing_params.h"
 
-t_scheduler	str_to_scheduler(char const *s)
+static t_scheduler_type	str_to_scheduler(char const *s)
 {
 	char const	*s_sch[] = {"fifo", "edf", NULL};
 	int			i;

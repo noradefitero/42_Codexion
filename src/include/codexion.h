@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/03 04:42:32 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/17 23:39:24 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 05:57:14 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,23 +16,23 @@
 # define PRGNAME "codexion"
 # define PRGVERSION "0.1"
 
-typedef enum e_scheduler
+typedef enum e_scheduler_type
 {
 	FIFO,
 	EDF,
 	UNKNOWN
-}	t_scheduler;
+}	t_scheduler_type;
 
 typedef struct s_config
 {
-	int			number_of_coders;
-	int			time_to_burnout;
-	int			time_to_compile;
-	int			time_to_debug;
-	int			time_to_refactor;
-	int			number_of_compiles_required;
-	int			dongle_cooldown;
-	t_scheduler	scheduler;
+	int					number_of_coders;
+	int					time_to_burnout;
+	int					time_to_compile;
+	int					time_to_debug;
+	int					time_to_refactor;
+	int					number_of_compiles_required;
+	int					dongle_cooldown;
+	t_scheduler_type	scheduler;
 }	t_config;
 
 // typedef struct s_data
