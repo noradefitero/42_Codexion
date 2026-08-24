@@ -39,8 +39,8 @@ int	main(int argc, char *argv[])
 	monitor__init_thread(hub__monitor(&hub));
 	logger__init_thread(hub__logger(&hub));
 	hub__coders_map(&hub, coder__join_thread);
-	monitor__join_thread(hub__monitor(&hub));
-	logger__join_thread(hub__logger(&hub));
+	monitor__exit_thread(hub__monitor(&hub));
+	logger__exit_thread(hub__logger(&hub));
 	hub__reset(&hub);
 	return (0);
 }
