@@ -18,26 +18,40 @@ static bool	monitor__th_check_if_burned(t_coder *coder, int burning_time)
 	return (get_sim_time(false) - coder->__last_compile > burning_time);
 }
 
+static bool	monitor__th_has_finished(t_coder *NONNULL coder)
+{
+	return (coder->__compiles >= coder->__number_of_compiles_required);
+}
+
 static void	*monitor__th_start_routine(t_monitor *NONNULL self)
 {
 	size_t	i;
+	bool	all_done;
 
 	while (*self->__coders && !self->__exit_thread)
 	{
+		all_done = true;
 		i = 0;
 		while (i < self->__n_coders && !self->__exit_thread)
 		{
-			if (monitor__th_check_if_burned(
-					self->__coders[i], self->__time_to_burnout)
-			)
+			if (!monitor__th_has_finished(self->__coders[i]))
 			{
-				log_state(i + 1, get_sim_time(false), BURNED);
-				if (self->__hub)
-					hub__on_burn(self->__hub);
-				return (NULL);
+				all_done = false;
+				if (monitor__th_check_if_burned(
+						self->__coders[i], self->__time_to_burnout)
+				)
+				{
+					log_state(i + 1, get_sim_time(false), BURNED);
+					if (self->__hub)
+						hub__on_burn(self->__hub);
+					return (NULL);
+				}
 			}
 			i++;
 		}
+		if (all_done || self->__exit_thread)
+			break ;
+		usleep(1000);
 	}
 	self->__thread_active = false;
 	return (NULL);
