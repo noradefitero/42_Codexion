@@ -1,6 +1,6 @@
 NAME = codexion
 CC = cc
-CFLAGS = -Wall -Wextra -Isrc/include -march=native
+CFLAGS = -Wall -Wextra -pthread -Isrc/include -march=native
 CLINKFLAGS = -fno-semantic-interposition -fno-plt
 ifdef DEBUG
     CFLAGS += -g -fdiagnostics-color=always -O0
