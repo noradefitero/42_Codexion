@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/18 00:06:46 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 08:50:08 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 07:37:44 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	logger__init_thread(t_logger *NONNULL self)
 		self
 	)
 	)
-		return (1);
+		return (print_error("FAILED CREATING LOGGER THREAD", false));
 	self->__thread_active = true;
 	return (0);
 }

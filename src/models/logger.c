@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/18 00:00:59 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 08:36:34 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 07:09:34 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@ int	logger__init(t_logger *NONNULL self)
 	if (pthread_mutex_init(&self->__mutex, NULL))
 	{
 		logger__reset(self);
-		return (1);
+		return (print_error("FAILED INITIALIZING LOGGER MUTEX", false));
 	}
 	self->__mutex_initialized = true;
 	if (pthread_cond_init(&self->__cond, NULL))
 	{
 		logger__reset(self);
-		return (1);
+		return (print_error("FAILED INITIALIZING LOGGER COND", false));
 	}
 	self->__cond_initialized = true;
 	return (0);
@@ -42,7 +42,10 @@ t_logger *NULLABLE	logger__create(void)
 
 	result = (t_logger *)ft_calloc(1, sizeof(t_logger));
 	if (!result)
+	{
+		print_error("FAILED ALLOCATING A LOGGER INSTANCE", false);
 		return (NULL);
+	}
 	if (logger__init(result))
 	{
 		logger__destroy(result);

@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/19 01:10:58 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 08:49:49 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 07:07:34 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ static inline t_log *NULLABLE	logger__new_log(int coder_id, t_log_mess state)
 
 	log = malloc(sizeof(t_log));
 	if (!log)
+	{
+		print_error("FAILED ALLOCATING MEMORY FOR A LOG IN QUEUE", false);
 		return (NULL);
+	}
 	log->timestamp = get_sim_time(false);
 	log->coder_id = coder_id;
 	log->state = state;
@@ -27,10 +30,10 @@ static inline t_log *NULLABLE	logger__new_log(int coder_id, t_log_mess state)
 }
 
 int	logger__add_to_queue(
-		t_logger *NONNULL self,
-		int coder_id,
-		t_log_mess state
-		)
+	t_logger *NONNULL self,
+	int coder_id,
+	t_log_mess state
+)
 {
 	t_log *NULLABLE	new;
 
@@ -86,9 +89,13 @@ void	logger__clear_queue(t_logger *NONNULL self)
 	self->__queue = NULL;
 	self->__queue_tail = NULL;
 	pthread_mutex_unlock(&self->__mutex);
-	while (current)
+	if (!current)
+		return ;
+	while (true)
 	{
 		next = current->next;
+		if (!next)
+			break ;
 		free(current);
 		current = next;
 	}
