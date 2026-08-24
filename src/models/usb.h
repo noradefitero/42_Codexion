@@ -43,6 +43,7 @@ t_usb *NULLABLE		usb__create(
 						t_config *NONNULL config
 						);
 void				usb__reset(t_usb *NONNULL self);
+void				usb__wake(t_usb *NONNULL self);
 void				usb__destroy(t_usb *NONNULL usb);
 
 /* GETTERS */

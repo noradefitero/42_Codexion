@@ -85,6 +85,13 @@ void	usb__reset(t_usb *NONNULL self)
 	}
 }
 
+void	usb__wake(t_usb *NONNULL self)
+{
+	pthread_mutex_lock(&self->__mutex);
+	pthread_cond_broadcast(&self->__cond);
+	pthread_mutex_unlock(&self->__mutex);
+}
+
 void	usb__destroy(t_usb *NONNULL usb)
 {
 	if (usb)
