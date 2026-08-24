@@ -9,28 +9,31 @@ else
 endif
 
 BUILD = build
-SRCS = 	src/main.c \
+SRCS =	src/main.c \
+		src/commands/commands.c \
+		src/commands/commands_help.c \
+		src/io/parsing_params.c \
+		src/io/print.c \
 		src/models/coder.c \
 		src/models/coder_setters.c \
 		src/models/coder_th.c \
 		src/models/coder_th_lifecycle.c \
 		src/models/hub.c \
-		src/models/hub_lifecycle.c \
 		src/models/hub_events.c \
-		src/models/usb.c \
+		src/models/hub_lifecycle.c \
+		src/models/logger.c \
+		src/models/logger_queue.c \
+		src/models/logger_th.c \
 		src/models/monitor.c \
 		src/models/monitor_th.c \
-		src/models/logger.c \
-		src/models/logger_th.c \
-		src/models/logger_queue.c \
-		src/commands/commands.c \
-		src/commands/commands_help.c \
-		src/io/print.c \
-		src/io/parsing_params.c \
-		src/utils/time.c \
+		src/models/schedulers/fifo.c \
+		src/models/schedulers/fifo_queue.c \
+		src/models/usb.c \
+		src/models/usb_api.c \
+		src/utils/ft/ft_calloc.c \
 		src/utils/ft/ft_isalpha.c \
 		src/utils/ft/ft_strisdigit.c \
-		src/utils/ft/ft_calloc.c
+		src/utils/time.c
 OBJS = $(patsubst %.c,$(BUILD)/%.o,$(SRCS))
 
 all: $(NAME)
