@@ -46,15 +46,29 @@ int	fifo__acquire(
 
 void	fifo__release(t_fifo *NONNULL self, t_coder *NONNULL coder)
 {
-	t_fifo_node	*first;
+	t_fifo_node	*current;
+	t_fifo_node	*previous;
 
-	if (!self->__active || self->__queue->content != coder)
+	if (!self->__active)
 		return ;
-	first = self->__queue;
-	self->__queue = first->next;
-	if (!self->__queue)
-		self->__queue_tail = NULL;
-	free(first);
+	previous = NULL;
+	current = self->__queue;
+	while (current)
+	{
+		if (current->content == coder)
+		{
+			if (previous)
+				previous->next = current->next;
+			else
+				self->__queue = current->next;
+			if (!current->next)
+				self->__queue_tail = previous;
+			free(current);
+			return ;
+		}
+		previous = current;
+		current = current->next;
+	}
 }
 
 void	fifo__clear_queue(t_fifo *NONNULL self)
