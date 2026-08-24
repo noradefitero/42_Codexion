@@ -2,13 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug",
+            "name": "Debug codexion",
             "type": "lldb-dap",
             "request": "launch",
             "program": "${workspaceFolder}/codexion",
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "build-debug",
-			"args": ["8", "9", "0", "5", "4", "9", "0", "edf"]
+			"args": ["2", "35", "18", "5", "4", "20", "0", "fifo"]
         }
     ]
 }
