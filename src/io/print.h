@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/09 20:13:26 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/18 09:23:46 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 05:50:31 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 typedef enum e_log_mess
 {
-	TAKEN_DONLE,
+	TAKEN_DONGLE,
 	COMPILING,
 	DEBUGGING,
 	REFACTORING,
