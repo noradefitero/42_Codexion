@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/12 03:22:46 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 07:12:37 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 06:46:14 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,9 @@ typedef struct s_hub
 	t_coder *NULLABLE *NULLABLE	__coders; /* Array of coders [*1, *2, NULL] */
 	t_usb *NULLABLE *NULLABLE	__usbs;
 	t_monitor					__monitor;
+	bool						__monitor_init;
 	t_logger					__logger;
+	bool						__logger_init;
 }	t_hub;
 
 int							hub__init(

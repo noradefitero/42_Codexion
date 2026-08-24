@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 08:02:24 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 06:39:23 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 07:26:53 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,29 @@
 int	hub__init(t_hub *NONNULL self, t_config *NONNULL config)
 {
 	self->__config = *config;
+	self->__coders = NULL;
+	self->__usbs = NULL;
+	self->__logger_init = false;
+	self->__monitor_init = false;
 	if (hub__create_usbs(self))
 	{
 		hub__reset(self);
-		return (1);
+		return (-1);
 	}
 	if (hub__create_coders(self))
 	{
 		hub__reset(self);
-		return (1);
+		return (-1);
 	}
 	monitor__init(
 		&self->__monitor, self->__coders, &self->__config, self);
-	logger__init(&self->__logger);
+	self->__monitor_init = true;
+	if (logger__init(&self->__logger))
+	{
+		hub__reset(self);
+		return (-1);
+	}
+	self->__logger_init = true;
 	return (0);
 }
 
@@ -37,7 +47,10 @@ t_hub	*hub__create(t_config *NONNULL config)
 
 	result = (t_hub *)ft_calloc(1, sizeof(t_hub));
 	if (!result)
+	{
+		print_error("FAILED ALLOCATING A HUB INSTANCE", false);
 		return (NULL);
+	}
 	if (hub__init(result, config))
 	{
 		hub__destroy(result);
@@ -52,16 +65,16 @@ void	hub__reset(t_hub *NONNULL self)
 	monitor__join_thread(&self->__monitor);
 	logger__reset(&self->__logger);
 	logger__join_thread(&self->__logger);
-	if (self->__coders)
-	{
-		hub__destroy_coders(self->__coders, self->__config.number_of_coders);
-		free(self->__coders);
-		self->__coders = NULL;
-	}
 	if (self->__usbs)
 	{
 		hub__destroy_usbs(self->__usbs, self->__config.number_of_coders);
 		free(self->__usbs);
+		self->__coders = NULL;
+	}
+	if (self->__coders)
+	{
+		hub__destroy_coders(self->__coders, self->__config.number_of_coders);
+		free(self->__coders);
 		self->__coders = NULL;
 	}
 }

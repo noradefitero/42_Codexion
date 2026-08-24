@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 08:39:26 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 05:57:49 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 07:04:08 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	hub__create_usbs(t_hub *NONNULL self)
 
 	buf = (t_usb **)ft_calloc(n_usbs, sizeof(void *));
 	if (!buf)
-		return (1);
+		return (print_error("FAILED ALLOCATING USBS LIST", false));
 	i = 0;
 	while (i < n_usbs)
 	{
@@ -46,7 +46,7 @@ int	hub__create_coders(t_hub *NONNULL self)
 
 	buf = (t_coder **)ft_calloc(n_coders, sizeof(void *));
 	if (!buf)
-		return (1);
+		return (print_error("FAILED ALLOCATING USBS LIST", false));
 	i = 0;
 	while (i < n_coders)
 	{
@@ -58,7 +58,8 @@ int	hub__create_coders(t_hub *NONNULL self)
 			return (1);
 		}
 		coder__set_left_usb(buf[i], usbs[i]);
-		coder__set_right_usb(buf[i], usbs[(i + 1) % n_coders]);
+		if (self->__config.number_of_coders > 1)
+			coder__set_right_usb(buf[i], usbs[(i + 1) % n_coders]);
 		i++;
 	}
 	self->__coders = buf;
