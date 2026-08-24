@@ -60,6 +60,8 @@ int	hub__create_coders(t_hub *NONNULL self)
 		coder__set_left_usb(buf[i], usbs[i]);
 		if (self->__config.number_of_coders > 1)
 			coder__set_right_usb(buf[i], usbs[(i + 1) % n_coders]);
+		else
+			coder__set_right_usb(buf[i], usbs[i]);
 		i++;
 	}
 	self->__coders = buf;
