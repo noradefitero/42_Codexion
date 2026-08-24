@@ -21,7 +21,10 @@ static inline int	coder__th_wait_usb(
 	while (usb__first(usb) != self)
 	{
 		if (self->__exit_thread || !usb__active(usb))
+		{
+			pthread_mutex_unlock(usb__mutex(usb));
 			return (-1);
+		}
 		pthread_cond_wait(usb__cond(usb), usb__mutex(usb));
 	}
 	pthread_mutex_unlock(usb__mutex(usb));
@@ -35,30 +38,35 @@ static inline int	coder__th_compile(
 {
 	t_usb	*first;
 	t_usb	*second;
+	bool	single;
 
 	first = self->__left_usb;
 	second = self->__right_usb;
+	single = (first == second);
 	if (first > second)
 	{
 		first = self->__right_usb;
 		second = self->__left_usb;
 	}
 	pthread_mutex_lock(usb__mutex(first));
-	pthread_mutex_lock(usb__mutex(second));
+	if (!single)
+		pthread_mutex_lock(usb__mutex(second));
 	if (usb__acquire(first, self))
 	{
-		pthread_mutex_unlock(usb__mutex(second));
+		if (!single)
+			pthread_mutex_unlock(usb__mutex(second));
 		pthread_mutex_unlock(usb__mutex(first));
 		return (-1);
 	}
-	if (usb__acquire(second, self))
+	if (!single && usb__acquire(second, self))
 	{
-		usb__release(first, self);
 		pthread_mutex_unlock(usb__mutex(second));
 		pthread_mutex_unlock(usb__mutex(first));
+		usb__release(first, self);
 		return (-1);
 	}
-	pthread_mutex_unlock(usb__mutex(second));
+	if (!single)
+		pthread_mutex_unlock(usb__mutex(second));
 	pthread_mutex_unlock(usb__mutex(first));
 	if (coder__th_wait_usb(self, self->__left_usb)
 		|| coder__th_wait_usb(self, self->__right_usb))
