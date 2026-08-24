@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/12 03:19:05 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 07:38:47 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 07:00:31 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,11 @@ typedef struct s_coder
 	int							__time_to_debug;
 	int							__time_to_refactor;
 	int							__number_of_compiles_required;
+	int							__time_to_burnout;
 
 }	t_coder;
 
-int					coder__init(
+void				coder__init(
 						t_coder *NONNULL self,
 						int id,
 						t_config *NONNULL config,
