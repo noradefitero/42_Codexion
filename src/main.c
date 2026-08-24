@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 01:58:07 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 09:14:46 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 07:39:32 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,17 @@ int	main(int argc, char *argv[])
 	if (config.number_of_coders == 0 || config.number_of_compiles_required == 0)
 		return (0);
 	if (hub__init(&hub, &config))
-		return (print_error("ERROR INITIALIZING HUB", false));
+		return (-1);
 	if (hub__coders_map(&hub, coder__init_thread))
 	{
 		hub__reset(&hub);
-		return (print_error("ERROR INITIALIZING THREADS", true));
+		return (-1);
 	}
 	monitor__init_thread(hub__monitor(&hub));
 	logger__init_thread(hub__logger(&hub));
 	hub__coders_map(&hub, coder__join_thread);
+	monitor__join_thread(hub__monitor(&hub));
+	logger__join_thread(hub__logger(&hub));
 	hub__reset(&hub);
 	return (0);
 }
