@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 22:06:47 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 07:39:43 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 07:08:17 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	coder__init_thread(t_coder *NONNULL self)
 		self
 	)
 	)
-		return (1);
+		return (print_error("FAILED CREATING CODER THREAD", false));
 	self->__thread_active = true;
 	return (0);
 }
