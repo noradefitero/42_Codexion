@@ -1,27 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft.h                                               :+:      :+:    :+:   */
+/*   ft_minsize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/01 00:41:21 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/25 08:38:48 by dde-fite         ###   ########.fr       */
+/*   Created: 2025/10/11 20:52:58 by dde-fite          #+#    #+#             */
+/*   Updated: 2026/08/25 08:38:44 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_H
-# define FT_H
+#include "ft.h"
 
-# include <string.h>
-# include <stdlib.h>
+size_t	ft_minsize(size_t n1, size_t n2)
+{
+	if (n1 < n2)
+		return (n1);
+	return (n2);
+}
 
-int		ft_isalpha(int c);
-int		ft_strisdigit(char const *s);
-void	*ft_calloc(size_t nmemb, size_t size);
-void	*ft_memset(void *s, int c, size_t n);
-void	*ft_memcpy(void *dest, const void *src, size_t n);
-void	*ft_realloc(void *ptr, size_t actual_size, size_t new_size);
-size_t	ft_minsize(size_t n1, size_t n2);
+// #include <stdio.h>
 
-#endif /* FT_H */
+// int	main(void)
+// {
+// 	const int	a = 146;
+// 	const int	b = 323;
+
+// 	printf("Nº1: %d, Nº2: %d. Min: %d", a, b, ft_minnbr(a, b));
+// }

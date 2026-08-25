@@ -6,21 +6,30 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/18 00:00:59 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:09:34 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 08:18:10 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "logger.h"
 
-int	logger__init(t_logger *NONNULL self)
+int	logger__init(t_logger *NONNULL self, size_t n_coders)
 {
-	self->__queue = NULL;
-	self->__queue_tail = NULL;
 	self->__thread_active = false;
 	self->__exit_flag = false;
-	self->__queue_active = true;
+	self->__head = 0;
+	self->__tail = 0;
+	self->__size = 0;
+	self->__pool_size = n_coders * LOG_POOL_MULTIPLIER;
+	self->__queue_init = false;
 	self->__cond_initialized = false;
 	self->__mutex_initialized = false;
+	self->__queue = malloc(sizeof(t_log) * self->__pool_size);
+	if (!self->__queue)
+	{
+		logger__reset(self);
+		return (print_error("FAILED ALLOCATING LOGGER POOL", false));
+	}
+	self->__queue_init = true;
 	if (pthread_mutex_init(&self->__mutex, NULL))
 	{
 		logger__reset(self);
@@ -36,7 +45,7 @@ int	logger__init(t_logger *NONNULL self)
 	return (0);
 }
 
-t_logger *NULLABLE	logger__create(void)
+t_logger *NULLABLE	logger__create(size_t n_coders)
 {
 	t_logger	*result;
 
@@ -46,7 +55,7 @@ t_logger *NULLABLE	logger__create(void)
 		print_error("FAILED ALLOCATING A LOGGER INSTANCE", false);
 		return (NULL);
 	}
-	if (logger__init(result))
+	if (logger__init(result, n_coders))
 	{
 		logger__destroy(result);
 		return (NULL);
@@ -58,18 +67,21 @@ void	logger__reset(t_logger *NONNULL self)
 {
 	if (self->__thread_active)
 		logger__exit_thread(self);
+	if (self->__queue_init)
+	{
+		free(self->__queue);
+		self->__queue_init = false;
+	}
 	if (self->__mutex_initialized)
 	{
-		pthread_mutex_destroy(&self->__mutex);
 		self->__mutex_initialized = false;
+		pthread_mutex_destroy(&self->__mutex);
 	}
 	if (self->__cond_initialized)
 	{
-		pthread_cond_destroy(&self->__cond);
 		self->__cond_initialized = false;
+		pthread_cond_destroy(&self->__cond);
 	}
-	if (self->__queue)
-		logger__clear_queue(self);
 }
 
 void	logger__destroy(t_logger *NONNULL logger)

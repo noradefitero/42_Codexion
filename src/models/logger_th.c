@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/18 00:06:46 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:37:44 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 08:58:21 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,12 @@
 
 static void	*logger__th_start_routine(t_logger *NONNULL self)
 {
-	t_log	*log;
+	t_log	buf;
 
 	while (!self->__exit_flag)
 	{
-		log = logger__pop_queue(self);
-		if (log)
-		{
-			log_state(log->coder_id, log->timestamp, log->state);
-			free (log);
-		}
+		if (logger__pop_queue(self, &buf))
+			log_state(buf.coder_id, buf.timestamp, buf.state);
 	}
 	self->__thread_active = false;
 	return (NULL);

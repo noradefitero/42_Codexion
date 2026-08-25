@@ -28,11 +28,16 @@ SRCS =	src/main.c \
 		src/models/monitor_th.c \
 		src/models/schedulers/fifo.c \
 		src/models/schedulers/fifo_queue.c \
+		src/models/schedulers/edf.c \
+		src/models/schedulers/edf_queue.c \
 		src/models/usb.c \
 		src/models/usb_api.c \
 		src/utils/ft/ft_calloc.c \
 		src/utils/ft/ft_isalpha.c \
 		src/utils/ft/ft_strisdigit.c \
+		src/utils/ft/ft_memcpy.c \
+		src/utils/ft/ft_realloc.c \
+		src/utils/ft/ft_minsize.c \
 		src/utils/time.c
 OBJS = $(patsubst %.c,$(BUILD)/%.o,$(SRCS))
 
