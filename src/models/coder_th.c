@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 01:17:32 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/25 00:59:14 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 07:21:22 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static inline int	coder__th_own_usb(
 		if (self->__exit_thread || !usb__active(usb))
 		{
 			pthread_mutex_unlock(usb__mutex(usb));
-			usb__release(usb, self);
+			usb__delete(usb, self);
 			return (-1);
 		}
 		pthread_cond_wait(usb__cond(usb), usb__mutex(usb));
@@ -52,9 +52,9 @@ static inline int	coder__th_compile(t_coder *NONNULL self)
 	}
 	if (coder__th_own_usb(self, first))
 		return (-1);
-	if (first != second && coder__th_own_usb(self, second))
+	if (coder__th_own_usb(self, second))
 	{
-		usb__release(first, self);
+		usb__delete(first, self);
 		return (-1);
 	}
 	logger__add_to_queue(self->__logger, self->__id, COMPILING);
