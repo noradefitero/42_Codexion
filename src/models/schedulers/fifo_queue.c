@@ -6,62 +6,58 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/23 13:37:25 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 23:51:07 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 07:17:51 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fifo.h"
 
-static inline int	fifo__find_coder(
-	t_coder *NULLABLE *NONNULL arr,
-	t_coder *NONNULL to_find
-)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < MAX_CODERS)
-	{
-		if (arr[i] != to_find)
-			return (i);
-		i++;
-	}
-	return (0);
-}
-
-int	fifo__acquire(
+int	fifo__put(
 	t_fifo *NONNULL self,
 	t_coder *NONNULL coder
 )
 {
-	t_coder	**arr;
-	size_t	i;
-
-	arr = self->__queue;
-	if (fifo__find_coder(arr, coder))
+	if (self->__size == MAX_CODERS)
 		return (1);
-	i = 0;
-	while (i < MAX_CODERS && arr[i])
-		i++;
-	arr[i] = coder;
+	self->__queue[self->__tail] = coder;
+	self->__tail = (self->__tail + 1) % MAX_CODERS;
+	self->__size++;
 	return (0);
 }
 
-void	fifo__release(t_fifo *NONNULL self, t_coder *NONNULL coder)
+void	fifo__pop(t_fifo *NONNULL self, t_coder *NONNULL coder)
 {
-	t_coder				**arr;
-	size_t				i;
-
-	arr = self->__queue;
-	i = 0;
-	while (i < MAX_CODERS && arr[i] != coder)
-		i++;
-	if (i == MAX_CODERS)
+	if (self->__size == 0 || self->__queue[self->__head] != coder)
 		return ;
-	while (i < MAX_CODERS - 1)
+	self->__head = (self->__head + 1) % MAX_CODERS;
+	self->__size--;
+}
+
+void	fifo__delete(t_fifo *NONNULL self, t_coder *NONNULL coder)
+{
+	int	i;
+	int	n;
+	int	size;
+
+	size = self->__size;
+	i = 0;
+	n = 0;
+	while (i < size)
 	{
-		arr[i] = arr[i + 1];
+		if (self->__queue[(self->__head + i) % MAX_CODERS] != coder)
+		{
+			self->__queue[(self->__head + n) % MAX_CODERS]
+				= self->__queue[(self->__head + i) % MAX_CODERS];
+			n++;
+		}
 		i++;
 	}
-	arr[MAX_CODERS - 1] = NULL;
+	i = n;
+	while (i < size)
+	{
+		self->__queue[(self->__head + i) % MAX_CODERS] = NULL;
+		i++;
+	}
+	self->__size = n;
+	self->__tail = (self->__head + n) % MAX_CODERS;
 }

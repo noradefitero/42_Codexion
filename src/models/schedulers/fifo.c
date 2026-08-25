@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/23 01:37:56 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/25 00:10:14 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 07:21:02 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,16 @@
 void	fifo__init(t_fifo *NONNULL self)
 {
 	self->super.__self = self;
-	self->super.__acquire = (int (*)(void *, t_coder *))fifo__acquire;
-	self->super.__release = (void (*)(void *, t_coder *))fifo__release;
+	self->super.__put = (int (*)(void *, t_coder *))fifo__put;
+	self->super.__pop = (void (*)(void *, t_coder *))fifo__pop;
+	self->super.__delete = (void (*)(void *, t_coder *))fifo__delete;
 	self->super.__first = (t_coder *(*)(void *))fifo__first;
 	self->super.__reset = (void (*)(void *))fifo__reset;
 	self->super.__destroy = (void (*)(void *))fifo__destroy;
 	memset(self->__queue, 0, sizeof(self->__queue));
+	self->__head = 0;
+	self->__tail = 0;
+	self->__size = 0;
 }
 
 t_fifo *NULLABLE	fifo__create(void)

@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/14 06:05:23 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:29:47 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 06:38:46 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,11 @@ static inline pthread_cond_t *NONNULL	usb__cond(const t_usb *NONNULL self)
 	return ((pthread_cond_t *)&self->__cond);
 }
 
+static inline int	usb__active(t_usb *NONNULL self)
+{
+	return (self->__active);
+}
+
 static inline t_coder *NULLABLE	usb__first(t_usb *NONNULL self)
 {
 	t_coder	*ret;
@@ -65,23 +70,17 @@ static inline t_coder *NULLABLE	usb__first(t_usb *NONNULL self)
 	return (ret);
 }
 
-static inline int	usb__active(t_usb *NONNULL self)
-{
-	return (self->__active);
-}
-
 int					usb__acquire(
 						t_usb *NONNULL self,
 						t_coder *NONNULL coder
 						);
-
 void				usb__release(
 						t_usb *NONNULL self,
 						t_coder *NONNULL coder
 						);
-
-t_coder *NULLABLE	usb__first(
-						t_usb *NONNULL self
+void				usb__delete(
+						t_usb *NONNULL self,
+						t_coder *NONNULL coder
 						);
 
 #endif /* USB_H */
