@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/19 01:10:58 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 23:54:01 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 07:30:06 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static inline t_log *NULLABLE	logger__new_log(int coder_id, t_log_mess state)
 {
 	t_log	*log;
 
-	log = ft_calloc(1, sizeof(t_log));
+	log = malloc(sizeof(t_log));
 	if (!log)
 	{
 		print_error("FAILED ALLOCATING MEMORY FOR A LOG IN QUEUE", false);
@@ -88,14 +88,11 @@ void	logger__clear_queue(t_logger *NONNULL self)
 	current = self->__queue;
 	self->__queue = NULL;
 	self->__queue_tail = NULL;
+	pthread_cond_broadcast(&self->__cond);
 	pthread_mutex_unlock(&self->__mutex);
-	if (!current)
-		return ;
-	while (true)
+	while (current)
 	{
 		next = current->next;
-		if (!next)
-			break ;
 		free(current);
 		current = next;
 	}
