@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/21 09:19:30 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 23:12:19 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 05:18:00 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ typedef struct s_coder	t_coder;
 typedef struct s_scheduler
 {
 	void *NULLABLE		__self;
-	int					(*NULLABLE __acquire)(void *NULLABLE self, t_coder *NONNULL fifo);
-	void				(*NULLABLE __release)(void *NULLABLE self, t_coder *NONNULL fifo);
+	int					(*NULLABLE __acquire)(void *NULLABLE self, t_coder *NONNULL coder);
+	void				(*NULLABLE __release)(void *NULLABLE self, t_coder *NONNULL coder);
 	t_coder *NULLABLE	(*NULLABLE __first)(void *NULLABLE self);
 	void				(*NULLABLE __reset)(void *NULLABLE self);
 	void				(*NULLABLE __destroy)(void *NULLABLE self);
