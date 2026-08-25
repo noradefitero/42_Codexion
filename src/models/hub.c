@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 08:02:24 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:26:53 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 08:18:45 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	hub__init(t_hub *NONNULL self, t_config *NONNULL config)
 	monitor__init(
 		&self->__monitor, self->__coders, &self->__config, self);
 	self->__monitor_init = true;
-	if (logger__init(&self->__logger))
+	if (logger__init(&self->__logger, self->__config.number_of_coders))
 	{
 		hub__reset(self);
 		return (-1);
