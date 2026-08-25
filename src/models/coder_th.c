@@ -6,23 +6,29 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 01:17:32 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:58:35 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 00:59:14 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "coder.h"
 
-static inline int	coder__th_wait_usb(
+static inline int	coder__th_own_usb(
 	t_coder *NONNULL self,
 	t_usb *NONNULL usb
 )
 {
 	pthread_mutex_lock(usb__mutex(usb));
+	if (usb__acquire(usb, self))
+	{
+		pthread_mutex_unlock(usb__mutex(usb));
+		return (-1);
+	}
 	while (usb__first(usb) != self)
 	{
 		if (self->__exit_thread || !usb__active(usb))
 		{
 			pthread_mutex_unlock(usb__mutex(usb));
+			usb__release(usb, self);
 			return (-1);
 		}
 		pthread_cond_wait(usb__cond(usb), usb__mutex(usb));
@@ -32,47 +38,23 @@ static inline int	coder__th_wait_usb(
 	return (0);
 }
 
-static inline int	coder__th_compile(
-	t_coder *NONNULL self
-)
+static inline int	coder__th_compile(t_coder *NONNULL self)
 {
 	t_usb	*first;
 	t_usb	*second;
-	bool	single;
 
 	first = self->__left_usb;
 	second = self->__right_usb;
-	single = (first == second);
 	if (first > second)
 	{
 		first = self->__right_usb;
 		second = self->__left_usb;
 	}
-	pthread_mutex_lock(usb__mutex(first));
-	if (!single)
-		pthread_mutex_lock(usb__mutex(second));
-	if (usb__acquire(first, self))
-	{
-		if (!single)
-			pthread_mutex_unlock(usb__mutex(second));
-		pthread_mutex_unlock(usb__mutex(first));
+	if (coder__th_own_usb(self, first))
 		return (-1);
-	}
-	if (!single && usb__acquire(second, self))
+	if (first != second && coder__th_own_usb(self, second))
 	{
-		pthread_mutex_unlock(usb__mutex(second));
-		pthread_mutex_unlock(usb__mutex(first));
 		usb__release(first, self);
-		return (-1);
-	}
-	if (!single)
-		pthread_mutex_unlock(usb__mutex(second));
-	pthread_mutex_unlock(usb__mutex(first));
-	if (coder__th_wait_usb(self, self->__left_usb)
-		|| coder__th_wait_usb(self, self->__right_usb))
-	{
-		usb__release(self->__left_usb, self);
-		usb__release(self->__right_usb, self);
 		return (-1);
 	}
 	logger__add_to_queue(self->__logger, self->__id, COMPILING);
