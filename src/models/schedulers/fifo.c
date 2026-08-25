@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/23 01:37:56 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:13:04 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 00:10:14 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	fifo__init(t_fifo *NONNULL self)
 	self->super.__first = (t_coder *(*)(void *))fifo__first;
 	self->super.__reset = (void (*)(void *))fifo__reset;
 	self->super.__destroy = (void (*)(void *))fifo__destroy;
-	self->__active = true;
+	memset(self->__queue, 0, sizeof(self->__queue));
 }
 
 t_fifo *NULLABLE	fifo__create(void)
@@ -39,7 +39,6 @@ t_fifo *NULLABLE	fifo__create(void)
 
 void	fifo__reset(t_fifo *NONNULL self)
 {
-	fifo__clear_queue(self);
 }
 
 void	fifo__destroy(t_fifo *NONNULL fifo)

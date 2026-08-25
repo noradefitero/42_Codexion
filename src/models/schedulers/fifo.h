@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/21 09:36:50 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:13:19 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 00:04:25 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,12 @@
 
 # include <pthread.h>
 # include <stdbool.h>
-
-typedef struct s_fifo_node
-{
-	t_coder *NONNULL				content;
-	struct s_fifo_node *NULLABLE	next;
-}	t_fifo_node;
+# include <string.h>
 
 typedef struct s_fifo
 {
-	t_scheduler				super;
-	t_fifo_node *NULLABLE	__queue;
-	t_fifo_node *NULLABLE	__queue_tail;
-	bool					__active;
+	t_scheduler			super;
+	t_coder *NULLABLE	__queue[MAX_CODERS];
 }	t_fifo;
 
 void				fifo__init(t_fifo *NONNULL self);
@@ -42,9 +35,7 @@ void				fifo__destroy(t_fifo *NONNULL fifo);
 /* GETTERS */
 static inline t_coder *NULLABLE	fifo__first(t_fifo *NONNULL self)
 {
-	if (self->__queue == NULL)
-		return (NULL);
-	return (self->__queue->content);
+	return (self->__queue[0]);
 }
 
 int					fifo__acquire(
@@ -55,6 +46,5 @@ void				fifo__release(
 						t_fifo *NONNULL self,
 						t_coder *NONNULL coder
 						);
-void				fifo__clear_queue(t_fifo *NONNULL self);
 
 #endif /* FIFO_H */

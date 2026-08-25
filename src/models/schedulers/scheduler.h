@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/21 09:19:30 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 06:35:54 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/24 23:12:19 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 # define SCHEDULER_H
 
 # include "annotations.h"
+
+/* >= 2 */
+# define MAX_CODERS 2
 
 typedef struct s_coder	t_coder;
 
