@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/18 00:00:59 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/25 08:18:10 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/26 12:47:53 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int	logger__init(t_logger *NONNULL self, size_t n_coders)
 {
+	self->___thread = (pthread_t)0;
 	self->__thread_active = false;
 	self->__exit_flag = false;
 	self->__head = 0;
@@ -63,14 +64,17 @@ t_logger *NULLABLE	logger__create(size_t n_coders)
 	return (result);
 }
 
+/*
+* Pure resource teardown: only legal once the thread has been joined
+* (hub__run guarantees it). Safe on a zeroed logger.
+*/
 void	logger__reset(t_logger *NONNULL self)
 {
-	if (self->__thread_active)
-		logger__exit_thread(self);
 	if (self->__queue_init)
 	{
-		free(self->__queue);
 		self->__queue_init = false;
+		free(self->__queue);
+		self->__queue = NULL;
 	}
 	if (self->__mutex_initialized)
 	{
@@ -84,7 +88,7 @@ void	logger__reset(t_logger *NONNULL self)
 	}
 }
 
-void	logger__destroy(t_logger *NONNULL logger)
+void	logger__destroy(t_logger *NULLABLE logger)
 {
 	if (logger)
 	{

@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/18 00:00:59 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 06:58:50 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/26 12:14:12 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,23 @@ void	monitor__init(
 	t_monitor *NONNULL self,
 	t_coder *NONNULL *NONNULL coders,
 	t_config *NONNULL config,
+	t_logger *NULLABLE logger,
 	t_hub *NULLABLE hub
 )
 {
+	self->___thread = (pthread_t)0;
 	self->__thread_active = false;
-	self->__exit_thread = false;
 	self->__coders = coders;
 	self->__n_coders = config->number_of_coders;
 	self->__time_to_burnout = config->time_to_burnout;
+	self->__logger = logger;
 	self->__hub = hub;
 }
 
 t_monitor *NULLABLE	monitor__create(
 	t_coder *NONNULL *NONNULL coders,
 	t_config *NONNULL config,
+	t_logger *NULLABLE logger,
 	t_hub *NULLABLE hub
 )
 {
@@ -41,17 +44,20 @@ t_monitor *NULLABLE	monitor__create(
 		print_error("FAILED ALLOCATING A MONITOR INSTANCE", false);
 		return (NULL);
 	}
-	monitor__init(result, coders, config, hub);
+	monitor__init(result, coders, config, logger, hub);
 	return (result);
 }
 
+/*
+* Safe to call at any moment: the join is a no-op when the thread was never
+* started or was already joined.
+*/
 void	monitor__reset(t_monitor *NONNULL self)
 {
-	if (self->__thread_active)
-		monitor__exit_thread(self);
+	monitor__join_thread(self);
 }
 
-void	monitor__destroy(t_monitor *NONNULL monitor)
+void	monitor__destroy(t_monitor *NULLABLE monitor)
 {
 	if (monitor)
 	{

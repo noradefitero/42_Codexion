@@ -27,6 +27,8 @@
 # include <unistd.h>
 # include <sys/time.h>
 
+typedef struct s_hub	t_hub;
+
 typedef enum e_coder_state
 {
 	COMPILE,
@@ -37,10 +39,10 @@ typedef enum e_coder_state
 typedef struct s_coder
 {
 	int							__id;
+	t_hub *NULLABLE				__hub;
 	t_logger *NULLABLE			__logger;
 	pthread_t NULL_UNSPECIFIED	___thread;
 	bool						__thread_active;
-	bool						__exit_thread;
 	t_usb *NULLABLE				__left_usb;
 	t_usb *NULLABLE				__right_usb;
 	t_coder_state				__state;
@@ -58,15 +60,17 @@ void				coder__init(
 						t_coder *NONNULL self,
 						int id,
 						t_config *NONNULL config,
-						t_logger *NULLABLE logger
+						t_logger *NULLABLE logger,
+						t_hub *NULLABLE hub
 						);
 t_coder *NULLABLE	coder__create(
 						int id,
 						t_config *NULLABLE config,
-						t_logger *NULLABLE logger
+						t_logger *NULLABLE logger,
+						t_hub *NULLABLE hub
 						);
 void				coder__reset(t_coder *NONNULL self);
-void				coder__destroy(t_coder *NONNULL coder);
+void				coder__destroy(t_coder *NULLABLE coder);
 
 /* GETTERS*/
 
@@ -94,15 +98,10 @@ void				coder__set_right_usb(
 						t_coder *NONNULL self,
 						const t_usb *NULLABLE usb
 						);
-void				coder__set_exit_thread(
-						t_coder *NONNULL self,
-						const bool exit_thread
-						);
 
 /* THREAD LIFECYCLE */
 int					coder__init_thread(t_coder *NONNULL self);
 int					coder__join_thread(t_coder *NONNULL self);
-int					coder__exit_thread(t_coder *NONNULL self);
 
 /* THREAD */
 void *NULLABLE		coder__th_start_routine(t_coder *NONNULL self);

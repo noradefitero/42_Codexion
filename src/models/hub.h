@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/12 03:22:46 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 06:46:14 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/26 12:53:27 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,22 +22,41 @@
 
 typedef struct s_hub
 {
-	t_config					__config;
-	t_coder *NULLABLE *NULLABLE	__coders; /* Array of coders [*1, *2, NULL] */
-	t_usb *NULLABLE *NULLABLE	__usbs;
-	t_monitor					__monitor;
-	bool						__monitor_init;
-	t_logger					__logger;
-	bool						__logger_init;
+	t_config							__config;
+	bool								__running;
+	pthread_mutex_t						__sim_mutex;
+	bool								__sim_mutex_init;
+	pthread_cond_t						__sim_cond;
+	bool								__sim_cond_init;
+	t_coder *NULLABLE *NULLABLE			__coders; /* Array of coders [*1, *2] */
+	t_usb *NULLABLE *NULLABLE			__usbs;
+	t_monitor							__monitor;
+	t_logger							__logger;
 }	t_hub;
 
-int							hub__init(
-								t_hub *NONNULL self,
-								t_config *NONNULL config
-								);
-t_hub *NULLABLE				hub__create(t_config *NONNULL config);
-void						hub__reset(t_hub *NONNULL self);
-void						hub__destroy(t_hub *NONNULL hub);
+/*
+* The hub owns the simulation state (__running) and the lifecycle of every
+* thread. Three phases:
+* 1. hub__init / hub__create : allocate + init primitives, no thread here.
+* 2. hub__run                : start logger/monitor/coder threads, block until
+*                              the simulation ends, then join them all.
+* 3. hub__reset / destroy    : free resources; only legal once no thread is
+*                              alive (hub__run guarantees it).
+*/
+int					hub__init(
+						t_hub *NONNULL self,
+						t_config *NONNULL config
+						);
+t_hub *NULLABLE		hub__create(t_config *NONNULL config);
+int					hub__run(t_hub *NONNULL self);
+void				hub__reset(t_hub *NONNULL self);
+void				hub__destroy(t_hub *NULLABLE hub);
+
+/* SIMULATION CONTROL */
+
+bool				hub__is_running(t_hub *NONNULL self);
+void				hub__end(t_hub *NONNULL self);
+void				hub__wait_end(t_hub *NONNULL self);
 
 /* GETTERS */
 
@@ -81,7 +100,8 @@ int							hub__coders_map(
 								int (*NONNULL f)(t_coder *NONNULL)
 								);
 
-/* EVENTS */
-void						hub__on_burn(t_hub *NONNULL self);
+/* THREADS ORCHESTRATION */
+int							hub__start_threads(t_hub *NONNULL self);
+void						hub__join_threads(t_hub *NONNULL self);
 
 #endif /* HUB_H */

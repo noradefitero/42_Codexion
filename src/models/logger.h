@@ -50,7 +50,7 @@ typedef struct s_logger
 int					logger__init(t_logger *NONNULL self, size_t n_coders);
 t_logger *NULLABLE	logger__create(size_t n_coders);
 void				logger__reset(t_logger *NONNULL self);
-void				logger__destroy(t_logger *NONNULL logger);
+void				logger__destroy(t_logger *NULLABLE logger);
 
 /* QUEUE */
 void				logger__add_to_queue(
@@ -62,10 +62,11 @@ int					logger__pop_queue(
 						t_logger *NONNULL self,
 						t_log *NONNULL buf
 						);
+void				logger__wake(t_logger *NONNULL self);
+void				logger__request_stop(t_logger *NONNULL self);
 
 /* THREAD LIFECYCLE */
 int					logger__init_thread(t_logger *NONNULL self);
 int					logger__join_thread(t_logger *NONNULL self);
-int					logger__exit_thread(t_logger *NONNULL self);
 
 #endif /* LOGGER_H */

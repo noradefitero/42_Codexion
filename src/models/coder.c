@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 06:59:43 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:13:50 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/26 12:14:17 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ void	coder__init(
 	t_coder *NONNULL self,
 	int id,
 	t_config *NONNULL config,
-	t_logger *NULLABLE logger
+	t_logger *NULLABLE logger,
+	t_hub *NULLABLE hub
 )
 {
 	self->__time_to_compile = config->time_to_compile;
@@ -25,19 +26,21 @@ void	coder__init(
 	self->__number_of_compiles_required = config->number_of_compiles_required;
 	self->__time_to_burnout = config->time_to_burnout;
 	self->__compiles = 0;
+	self->__last_compile = get_sim_time(false);
 	self->__id = id;
 	self->__state = COMPILE;
+	self->__hub = hub;
 	self->__logger = logger;
 	self->__left_usb = NULL;
 	self->__right_usb = NULL;
-	self->__exit_thread = false;
 	self->__thread_active = false;
 }
 
 t_coder	*coder__create(
 	int id,
 	t_config *NULLABLE config,
-	t_logger *NULLABLE logger
+	t_logger *NULLABLE logger,
+	t_hub *NULLABLE hub
 )
 {
 	t_coder	*result;
@@ -48,20 +51,24 @@ t_coder	*coder__create(
 		print_error("FAILED ALLOCATING A CODER INSTANCE", false);
 		return (NULL);
 	}
-	coder__init(result, id, config, logger);
+	coder__init(result, id, config, logger, hub);
 	return (result);
 }
 
-void	coder__reset(t_coder *self)
+/*
+* Safe to call at any moment: the join is a no-op when the thread was never
+* started or was already joined. Releasing resources happens in hub__reset
+* once every thread is guaranteed to be dead.
+*/
+void	coder__reset(t_coder *NONNULL self)
 {
-	if (self->__thread_active)
-	{
-		coder__exit_thread(self);
-		coder__join_thread(self);
-	}
+	coder__join_thread(self);
+	self->__thread_active = false;
+	self->__state = COMPILE;
+	self->__compiles = 0;
 }
 
-void	coder__destroy(t_coder *coder)
+void	coder__destroy(t_coder *NULLABLE coder)
 {
 	if (coder)
 	{

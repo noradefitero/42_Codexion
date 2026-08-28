@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/19 01:10:58 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/25 09:16:39 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/26 12:48:41 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,12 @@ void	logger__add_to_queue(
 {
 	t_log *NONNULL	log;
 
-	if (!self->__queue_init)
-		return ;
 	pthread_mutex_lock(&self->__mutex);
+	if (!self->__queue_init)
+	{
+		pthread_mutex_unlock(&self->__mutex);
+		return ;
+	}
 	if (self->__size == self->__pool_size && logger__increase_pool(self))
 	{
 		print_error("LOGGER PRINTING POOL OVERFLOWED", false);
@@ -58,23 +61,44 @@ void	logger__add_to_queue(
 	pthread_mutex_unlock(&self->__mutex);
 }
 
+/*
+* Blocks until a log is available and copies it to buf (returns 1), or until
+* the queue is empty and a stop was requested (returns 0).
+*/
 int	logger__pop_queue(t_logger *NONNULL self, t_log *NONNULL buf)
 {
-	if (!self->__queue_init)
-		return (0);
 	pthread_mutex_lock(&self->__mutex);
-	while (self->__size == 0)
-	{
-		if (self->__exit_flag)
-		{
-			pthread_mutex_unlock(&self->__mutex);
-			return (0);
-		}
+	while (self->__queue_init && self->__size == 0 && !self->__exit_flag)
 		pthread_cond_wait(&self->__cond, &self->__mutex);
+	if (!self->__queue_init || self->__size == 0)
+	{
+		pthread_mutex_unlock(&self->__mutex);
+		return (0);
 	}
 	*buf = self->__queue[self->__head];
 	self->__head = (self->__head + 1) % self->__pool_size;
 	self->__size--;
 	pthread_mutex_unlock(&self->__mutex);
 	return (1);
+}
+
+void	logger__wake(t_logger *NONNULL self)
+{
+	pthread_mutex_lock(&self->__mutex);
+	if (self->__cond_initialized)
+		pthread_cond_broadcast(&self->__cond);
+	pthread_mutex_unlock(&self->__mutex);
+}
+
+/*
+* Asks the thread to exit once the queue is drained. Callers must still join
+* the thread afterwards (hub__join_threads does).
+*/
+void	logger__request_stop(t_logger *NONNULL self)
+{
+	pthread_mutex_lock(&self->__mutex);
+	self->__exit_flag = true;
+	if (self->__cond_initialized)
+		pthread_cond_broadcast(&self->__cond);
+	pthread_mutex_unlock(&self->__mutex);
 }

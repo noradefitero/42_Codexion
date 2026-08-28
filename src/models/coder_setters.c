@@ -21,8 +21,3 @@ void	coder__set_right_usb(t_coder *self, const t_usb *usb)
 {
 	self->__right_usb = (t_usb *)usb;
 }
-
-void	coder__set_exit_thread(t_coder *NONNULL self, const bool exit_thread)
-{
-	self->__exit_thread = (bool)exit_thread;
-}

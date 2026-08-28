@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 22:06:47 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:08:17 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/26 12:26:17 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,8 @@ int	coder__init_thread(t_coder *NONNULL self)
 
 int	coder__join_thread(t_coder *NONNULL self)
 {
+	if (!self->__thread_active)
+		return (0);
+	self->__thread_active = false;
 	return (pthread_join(self->___thread, NULL));
-}
-
-int	coder__exit_thread(t_coder *NONNULL self)
-{
-	if (self->__thread_active)
-		self->__exit_thread = true;
-	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 01:58:07 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:39:32 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/26 13:02:07 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int	main(int argc, char *argv[])
 {
 	t_config	config;
 	t_hub		hub;
+	int			status;
 
 	if (argc < 2)
 		return (help());
@@ -31,16 +32,7 @@ int	main(int argc, char *argv[])
 		return (0);
 	if (hub__init(&hub, &config))
 		return (-1);
-	if (hub__coders_map(&hub, coder__init_thread))
-	{
-		hub__reset(&hub);
-		return (-1);
-	}
-	monitor__init_thread(hub__monitor(&hub));
-	logger__init_thread(hub__logger(&hub));
-	hub__coders_map(&hub, coder__join_thread);
-	monitor__exit_thread(hub__monitor(&hub));
-	logger__exit_thread(hub__logger(&hub));
+	status = hub__run(&hub);
 	hub__reset(&hub);
-	return (0);
+	return (status);
 }

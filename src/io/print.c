@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/09 20:12:41 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 05:50:43 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/27 15:07:53 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,13 @@ void	log_state(int n_coder, t_ms tm, t_log_mess state)
 
 	pthread_mutex_lock(&mutex);
 	if (burned)
+	{
+		pthread_mutex_unlock(&mutex);
 		return ;
+	}
+	if (state == BURNED)
+		burned = true;
+	pthread_mutex_unlock(&mutex);
 	if (state == TAKEN_DONGLE)
 		printf(template, tm, n_coder, TAKEN_DONGLE_MESS);
 	else if (state == COMPILING)
@@ -38,9 +44,5 @@ void	log_state(int n_coder, t_ms tm, t_log_mess state)
 	else if (state == REFACTORING)
 		printf(template, tm, n_coder, REFACTORING_MESS);
 	else if (state == BURNED)
-	{
 		fprintf(stderr, template, tm, n_coder, BURNED_MESS);
-		burned = true;
-	}
-	pthread_mutex_unlock(&mutex);
 }
