@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 06:59:43 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:30:15 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/26 13:00:10 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int	usb__init(
 )
 {
 	self->__dongle_cooldown = config->dongle_cooldown;
+	self->__last_used = -1;
 	self->__scheduler = NULL;
 	self->__mutex_initialized = false;
 	self->__cond_initialized = false;
@@ -36,7 +37,7 @@ int	usb__init(
 	if (config->scheduler == FIFO)
 		self->__scheduler = (t_scheduler *)fifo__create();
 	else if (config->scheduler == EDF)
-		return (print_error("EDF NOT ALREADY AVAILABLE", false));
+		self->__scheduler = (t_scheduler *)edf__create();
 	if (!self->__scheduler)
 	{
 		usb__reset(self);
@@ -83,13 +84,6 @@ void	usb__reset(t_usb *NONNULL self)
 		scheduler__destroy(self->__scheduler);
 		self->__scheduler = NULL;
 	}
-}
-
-void	usb__wake(t_usb *NONNULL self)
-{
-	pthread_mutex_lock(&self->__mutex);
-	pthread_cond_broadcast(&self->__cond);
-	pthread_mutex_unlock(&self->__mutex);
 }
 
 void	usb__destroy(t_usb *NONNULL usb)

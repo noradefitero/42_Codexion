@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/23 01:37:56 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/25 07:50:53 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/25 10:22:48 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,10 @@ t_fifo *NULLABLE	fifo__create(void)
 
 void	fifo__reset(t_fifo *NONNULL self)
 {
+	memset(self->__queue, 0, sizeof(self->__queue));
+	self->__head = 0;
+	self->__tail = 0;
+	self->__size = 0;
 }
 
 void	fifo__destroy(t_fifo *NONNULL fifo)

@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/14 06:05:23 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/25 06:38:46 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/26 13:00:16 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ typedef struct s_usb
 	pthread_cond_t			__cond;
 	bool					__cond_initialized;
 	int						__dongle_cooldown;
+	t_ms					__last_used;
 	bool					__active;
 }	t_usb;
 
@@ -43,7 +44,6 @@ t_usb *NULLABLE		usb__create(
 						t_config *NONNULL config
 						);
 void				usb__reset(t_usb *NONNULL self);
-void				usb__wake(t_usb *NONNULL self);
 void				usb__destroy(t_usb *NONNULL usb);
 
 /* GETTERS */
@@ -66,8 +66,19 @@ static inline t_coder *NULLABLE	usb__first(t_usb *NONNULL self)
 {
 	t_coder	*ret;
 
+	pthread_mutex_lock(&self->__mutex);
 	ret = scheduler__first(self->__scheduler);
+	pthread_mutex_unlock(&self->__mutex);
 	return (ret);
+}
+
+/* Requires the usb mutex to be already held by the caller. */
+t_coder *NULLABLE			usb__first_unsafe(t_usb *NONNULL self);
+void						usb__wake(t_usb *NONNULL self);
+
+static inline t_scheduler *NONNULL	usb__scheduler_unsafe(t_usb *NONNULL self)
+{
+	return (self->__scheduler);
 }
 
 int					usb__acquire(
