@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/12 03:19:05 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/24 07:00:31 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/29 20:19:57 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,17 @@
 # include <pthread.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <stdint.h>
 # include <unistd.h>
 # include <sys/time.h>
 
 typedef struct s_hub	t_hub;
 
-typedef enum e_coder_state
-{
-	COMPILE,
-	DEBUG,
-	REFACTOR,
-}	t_coder_state;
+# define COMPILE 1
+# define DEBUG 2
+# define REFACTOR 4
+
+typedef uint8_t			t_coder_state;
 
 typedef struct s_coder
 {
