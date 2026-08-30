@@ -52,6 +52,12 @@ void	usb__release(
 {
 	pthread_mutex_lock(&self->__mutex);
 	scheduler__pop(self->__scheduler, coder);
+	/*
+	* Stamp the release instant so the next coder that reaches the head
+	* of this queue can sleep through the cooldown deadline under the
+	* same mutex/cond. Stored as wall-clock time to match get_time().
+	*/
+	self->__last_used = get_time();
 	pthread_cond_broadcast(&self->__cond);
 	pthread_mutex_unlock(&self->__mutex);
 }
