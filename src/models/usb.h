@@ -81,6 +81,26 @@ static inline t_scheduler *NONNULL	usb__scheduler_unsafe(t_usb *NONNULL self)
 	return (self->__scheduler);
 }
 
+/*
+* Returns the milliseconds remaining until the dongle cooldown expires,
+* or 0 if there is no active cooldown. The caller must NOT hold the usb
+* mutex unless it is the same thread that owns the wait (since this only
+* reads fields, no lock is required for the read itself).
+*/
+static inline t_ms	usb__cooldown_remaining(const t_usb *NONNULL self)
+{
+	t_ms	now;
+	t_ms	deadline;
+
+	if (self->__dongle_cooldown <= 0 || self->__last_used < 0)
+		return (0);
+	deadline = self->__last_used + (t_ms)self->__dongle_cooldown;
+	now = get_time();
+	if (now >= deadline)
+		return (0);
+	return (deadline - now);
+}
+
 int					usb__acquire(
 						t_usb *NONNULL self,
 						t_coder *NONNULL coder
