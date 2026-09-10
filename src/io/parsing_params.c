@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/17 01:23:11 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/21 09:36:10 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/30 19:30:52 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ int	parse_arguments(t_config *config, int argc, char *argv[])
 	int				i;
 
 	i = 0;
-	if (argc != 8 && argc != 9)
-		return (print_error("INVALID SINTAX. EXPECTING 7-8 ARGUMENTS", true));
+	if (argc != 9)
+		return (print_error("INVALID SINTAX. EXPECTING 8 ARGUMENTS", true));
 	while (iarg_arr[i])
 	{
 		if (!ft_strisdigit(argv[i + 1]))
@@ -45,11 +45,8 @@ int	parse_arguments(t_config *config, int argc, char *argv[])
 		*(int *)iarg_arr[i] = atoi(argv[i + 1]);
 		i++;
 	}
-	if (argc == 9)
-	{
-		config->scheduler = str_to_scheduler(argv[8]);
-		if (config->scheduler == UNKNOWN)
-			return (print_error("INVALID SCHEDULER", true));
-	}
+	config->scheduler = str_to_scheduler(argv[8]);
+	if (config->scheduler == UNKNOWN)
+		return (print_error("INVALID SCHEDULER", true));
 	return (0);
 }

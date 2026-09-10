@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 01:11:08 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/05 01:20:16 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/08/30 19:32:44 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ typedef struct s_argument_meta
 # define SCHEDULER_NAME \
 	"scheduler"
 # define SCHEDULER_DESC \
-	"(optional) Scheduler: fifo or edf."
+	"Scheduler: fifo or edf"
 
 int	help(void);
 
