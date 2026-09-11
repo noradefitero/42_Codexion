@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/13 08:39:26 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/26 13:01:23 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/09/10 23:16:24 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	hub__end(t_hub *NONNULL self)
 	i = 0;
 	while (i < n_usbs)
 	{
-		usb__wake(self->__usbs[i]);
+		usb__wake_safe(self->__usbs[i]);
 		i++;
 	}
 	logger__wake(&self->__logger);

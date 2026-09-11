@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/14 06:05:23 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/26 13:00:16 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/09/10 23:35:57 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,55 +57,19 @@ static inline pthread_cond_t *NONNULL	usb__cond(const t_usb *NONNULL self)
 	return ((pthread_cond_t *)&self->__cond);
 }
 
-static inline int	usb__active(t_usb *NONNULL self)
+static inline t_ms	usb__cooldown_deadline(const t_usb *NONNULL self)
 {
-	return (self->__active);
+	if (self->__dongle_cooldown <= 0)
+		return (0);
+	return (self->__last_used + (t_ms)self->__dongle_cooldown);
 }
 
 static inline t_coder *NULLABLE	usb__first(t_usb *NONNULL self)
 {
-	t_coder	*ret;
-
-	pthread_mutex_lock(&self->__mutex);
-	ret = scheduler__first(self->__scheduler);
-	pthread_mutex_unlock(&self->__mutex);
-	return (ret);
-}
-
-/* Requires the usb mutex to be already held by the caller. */
-t_coder *NULLABLE			usb__first_unsafe(t_usb *NONNULL self);
-void						usb__wake(t_usb *NONNULL self);
-
-static inline t_scheduler *NONNULL	usb__scheduler_unsafe(t_usb *NONNULL self)
-{
-	return (self->__scheduler);
-}
-
-/*
-* Returns the milliseconds remaining until the dongle cooldown expires,
-* or 0 if there is no active cooldown. The caller must NOT hold the usb
-* mutex unless it is the same thread that owns the wait (since this only
-* reads fields, no lock is required for the read itself).
-*/
-static inline t_ms	usb__cooldown_remaining(const t_usb *NONNULL self)
-{
-	t_ms	now;
-	t_ms	deadline;
-
-	if (self->__dongle_cooldown <= 0 || self->__last_used < 0)
-		return (0);
-	deadline = self->__last_used + (t_ms)self->__dongle_cooldown;
-	now = get_time();
-	if (now >= deadline)
-		return (0);
-	return (deadline - now);
+	return (scheduler__first(self->__scheduler));
 }
 
 int					usb__acquire(
-						t_usb *NONNULL self,
-						t_coder *NONNULL coder
-						);
-void				usb__release(
 						t_usb *NONNULL self,
 						t_coder *NONNULL coder
 						);
@@ -113,5 +77,14 @@ void				usb__delete(
 						t_usb *NONNULL self,
 						t_coder *NONNULL coder
 						);
+void				usb__release_safe(
+						t_usb *NONNULL self,
+						t_coder *NONNULL coder
+						);
+void				usb__delete_safe(
+						t_usb *NONNULL self,
+						t_coder *NONNULL coder
+						);
+void				usb__wake_safe(t_usb *NONNULL self);
 
 #endif /* USB_H */
