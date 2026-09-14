@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/12 03:19:05 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/29 20:19:57 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/09/14 11:29:43 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # include "../utils/time.h"
 # include "../utils/ft/ft.h"
 # include "../io/print.h"
-# include "usb.h"
 # include "logger.h"
 # include "codexion.h"
 
@@ -29,6 +28,7 @@
 # include <sys/time.h>
 
 typedef struct s_hub	t_hub;
+typedef struct s_usb	t_usb;
 
 # define COMPILE 1
 # define DEBUG 2
@@ -87,6 +87,11 @@ static inline t_usb	*NULLABLE	coder__right_usb(const t_coder *NONNULL self)
 static inline t_coder_state	coder__state(const t_coder *NONNULL self)
 {
 	return (self->__state);
+}
+
+static inline t_ms	coder__deadline(const t_coder *NONNULL self)
+{
+	return (self->__last_compile + self->__time_to_burnout);
 }
 
 /* SETTERS */
