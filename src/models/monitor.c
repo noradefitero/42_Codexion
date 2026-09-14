@@ -16,8 +16,7 @@ void	monitor__init(
 	t_monitor *NONNULL self,
 	t_coder *NONNULL *NONNULL coders,
 	t_config *NONNULL config,
-	t_logger *NULLABLE logger,
-	t_hub *NULLABLE hub
+	t_logger *NULLABLE logger
 )
 {
 	self->___thread = (pthread_t)0;
@@ -26,7 +25,7 @@ void	monitor__init(
 	self->__n_coders = config->number_of_coders;
 	self->__time_to_burnout = config->time_to_burnout;
 	self->__logger = logger;
-	self->__hub = hub;
+	self->__hub = NULL;
 }
 
 t_monitor *NULLABLE	monitor__create(
@@ -44,7 +43,8 @@ t_monitor *NULLABLE	monitor__create(
 		print_error("FAILED ALLOCATING A MONITOR INSTANCE", false);
 		return (NULL);
 	}
-	monitor__init(result, coders, config, logger, hub);
+	monitor__init(result, coders, config, logger);
+	monitor__set_hub(result, hub);
 	return (result);
 }
 
@@ -64,4 +64,9 @@ void	monitor__destroy(t_monitor *NULLABLE monitor)
 		monitor__reset(monitor);
 		free(monitor);
 	}
+}
+
+void	monitor__set_hub(t_monitor *NONNULL self, t_hub *NULLABLE hub)
+{
+	self->__hub = hub;
 }

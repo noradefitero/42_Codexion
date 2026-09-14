@@ -48,9 +48,9 @@ int	hub__init(t_hub *NONNULL self, t_config *NONNULL config)
 		&self->__monitor,
 		self->__coders,
 		&self->__config,
-		&self->__logger,
-		self
+		&self->__logger
 		);
+	monitor__set_hub(&self->__monitor, self);
 	return (0);
 }
 

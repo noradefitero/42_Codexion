@@ -40,8 +40,7 @@ void				monitor__init(
 						t_monitor *NONNULL self,
 						t_coder *NONNULL *NONNULL coders,
 						t_config *NONNULL config,
-						t_logger *NULLABLE logger,
-						t_hub *NULLABLE hub
+						t_logger *NULLABLE logger
 						);
 t_monitor *NULLABLE	monitor__create(
 						t_coder *NONNULL *NONNULL coders,
@@ -51,6 +50,10 @@ t_monitor *NULLABLE	monitor__create(
 						);
 void				monitor__reset(t_monitor *NONNULL self);
 void				monitor__destroy(t_monitor *NULLABLE monitor);
+void				monitor__set_hub(
+						t_monitor *NONNULL self,
+						t_hub *NULLABLE hub
+						);
 
 /* THREAD LIFECYCLE */
 int					monitor__init_thread(t_monitor *NONNULL self);
