@@ -6,17 +6,9 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/23 13:37:25 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/09/14 12:00:00 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/09/14 21:01:06 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-/*
- * EDF is a min-heap living on the same rotating window as FIFO
- * (head, tail, size). All positions are logical heap indexes; the
- * physical slot is (head + index) % MAX_CODERS, so the heap rotates
- * freely over the circular buffer and the freed slots are reused.
- * put / pop / delete are O(log n) thanks to sift_up / sift_down.
- */
 
 #include "edf.h"
 #include "../coder.h"
@@ -40,7 +32,6 @@ static void	edf__swap(t_edf *NONNULL self, int a, int b)
 	self->__queue[edf__at(self, b)] = tmp;
 }
 
-/* Bubble `index` up while its deadline is earlier than its parent's. */
 void	edf__sift_up(t_edf *NONNULL self, int index)
 {
 	int	parent;
@@ -56,7 +47,6 @@ void	edf__sift_up(t_edf *NONNULL self, int index)
 	}
 }
 
-/* Sink `index` down while a child has an earlier deadline. */
 void	edf__sift_down(t_edf *NONNULL self, int index)
 {
 	int	left;
