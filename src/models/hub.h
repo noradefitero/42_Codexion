@@ -83,25 +83,26 @@ static inline t_logger *NONNULL	hub__logger(const t_hub *NONNULL self)
 }
 
 /* LIFECYCLE */
-int							hub__create_usbs(t_hub *NONNULL self);
-int							hub__create_coders(
-								t_hub *NONNULL self
-								);
-void						hub__destroy_usbs(
-								t_usb *NONNULL *NONNULL usbs,
-								size_t n_usbs
-								);
-void						hub__destroy_coders(
-								t_coder *NULLABLE *NONNULL coders,
-								size_t n_coders
-								);
-int							hub__coders_map(
-								t_hub *NONNULL self,
-								int (*NONNULL f)(t_coder *NONNULL)
-								);
+/* LIFECYCLE */
+int					hub__create_usbs(t_hub *NONNULL self);
+int					hub__create_coders(
+						t_hub *NONNULL self
+						);
+void				hub__destroy_usbs(
+						t_usb *NONNULL *NONNULL usbs,
+						size_t n_usbs
+						);
+void				hub__destroy_coders(
+						t_coder *NULLABLE *NONNULL coders,
+						size_t n_coders
+						);
+int					hub__coders_map(
+						t_hub *NONNULL self,
+						int (*NONNULL f)(t_coder *NONNULL)
+						);
 
 /* THREADS ORCHESTRATION */
-int							hub__start_threads(t_hub *NONNULL self);
-void						hub__join_threads(t_hub *NONNULL self);
+int					hub__start_threads(t_hub *NONNULL self);
+void				hub__join_threads(t_hub *NONNULL self);
 
 #endif /* HUB_H */
