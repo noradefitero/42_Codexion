@@ -12,6 +12,26 @@
 
 #include "hub.h"
 
+static int	hub__init_core(t_hub *NONNULL self)
+{
+	if (hub__create_usbs(self))
+	{
+		hub__reset(self);
+		return (-1);
+	}
+	if (hub__create_coders(self))
+	{
+		hub__reset(self);
+		return (-1);
+	}
+	if (logger__init(&self->__logger, self->__config.number_of_coders))
+	{
+		hub__reset(self);
+		return (-1);
+	}
+	return (0);
+}
+
 int	hub__init(t_hub *NONNULL self, t_config *NONNULL config)
 {
 	memset(self, 0, sizeof(t_hub));
@@ -29,21 +49,8 @@ int	hub__init(t_hub *NONNULL self, t_config *NONNULL config)
 		return (print_error("FAILED INITIALIZING SIM COND", false));
 	}
 	self->__sim_cond_init = true;
-	if (hub__create_usbs(self))
-	{
-		hub__reset(self);
+	if (hub__init_core(self))
 		return (-1);
-	}
-	if (hub__create_coders(self))
-	{
-		hub__reset(self);
-		return (-1);
-	}
-	if (logger__init(&self->__logger, self->__config.number_of_coders))
-	{
-		hub__reset(self);
-		return (-1);
-	}
 	monitor__init(
 		&self->__monitor,
 		self->__coders,
