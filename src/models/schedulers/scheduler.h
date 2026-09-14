@@ -18,18 +18,26 @@
 /* > 1 < INT_MAX */
 # define MAX_CODERS 2
 
-typedef struct s_coder	t_coder;
+typedef struct s_coder		t_coder;
+typedef t_coder *NULLABLE	t_coder_p;
+typedef t_coder *NONNULL	t_coder_nn;
+
+typedef int					(*t_put_fn)(void *NULLABLE self, t_coder_nn coder);
+typedef void				(*t_pop_fn)(void *NULLABLE self, t_coder_nn coder);
+typedef void				(*t_del_fn)(void *NULLABLE self, t_coder_nn coder);
+typedef t_coder_p			(*t_first_fn)(void *NULLABLE self);
+typedef void				(*t_reset_fn)(void *NULLABLE self);
+typedef void				(*t_destroy_fn)(void *NULLABLE self);
 
 typedef struct s_scheduler
 {
-	void *NULLABLE		__self;
-	int					(*NULLABLE __put)(void *NULLABLE self, t_coder *NONNULL coder);
-	void				(*NULLABLE __pop)(void *NULLABLE self, t_coder *NONNULL coder);
-	void				(*NULLABLE __delete)(void *NULLABLE self, t_coder *NONNULL coder);
-	t_coder *NULLABLE	(*NULLABLE __first)(void *NULLABLE self);
-	void				(*NULLABLE __reset)(void *NULLABLE self);
-	void				(*NULLABLE __destroy)(void *NULLABLE self);
-
+	void *NULLABLE				__self;
+	t_put_fn NULLABLE			__put;
+	t_pop_fn NULLABLE			__pop;
+	t_del_fn NULLABLE			__delete;
+	t_first_fn NULLABLE			__first;
+	t_reset_fn NULLABLE			__reset;
+	t_destroy_fn NULLABLE		__destroy;
 }	t_scheduler;
 
 /* GETTERS */
@@ -60,27 +68,6 @@ static inline void	scheduler__delete(
 )
 {
 	self->__delete(self->__self, coder);
-}
-
-static inline t_coder *NULLABLE	scheduler__first(
-	t_scheduler *NONNULL self
-)
-{
-	return (self->__first(self->__self));
-}
-
-static inline void	scheduler__reset(
-	t_scheduler *NONNULL self
-)
-{
-	self->__reset(self->__self);
-}
-
-static inline void	scheduler__destroy(
-	t_scheduler *NONNULL self
-)
-{
-	self->__destroy(self->__self);
 }
 
 #endif /* SCHEDULER_H */

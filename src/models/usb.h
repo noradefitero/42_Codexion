@@ -16,6 +16,7 @@
 # include "schedulers/fifo.h"
 # include "schedulers/edf.h"
 # include "schedulers/scheduler.h"
+# include "schedulers/scheduler_getters.h"
 # include "codexion.h"
 # include "annotations.h"
 # include "../utils/ft/ft.h"
