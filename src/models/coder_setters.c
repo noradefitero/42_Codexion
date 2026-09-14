@@ -21,3 +21,8 @@ void	coder__set_right_usb(t_coder *self, const t_usb *usb)
 {
 	self->__right_usb = (t_usb *)usb;
 }
+
+void	coder__set_hub(t_coder *NONNULL self, t_hub *NULLABLE hub)
+{
+	self->__hub = hub;
+}

@@ -60,8 +60,7 @@ void				coder__init(
 						t_coder *NONNULL self,
 						int id,
 						t_config *NONNULL config,
-						t_logger *NULLABLE logger,
-						t_hub *NULLABLE hub
+						t_logger *NULLABLE logger
 						);
 t_coder *NULLABLE	coder__create(
 						int id,
@@ -102,6 +101,10 @@ void				coder__set_left_usb(
 void				coder__set_right_usb(
 						t_coder *NONNULL self,
 						const t_usb *NULLABLE usb
+						);
+void				coder__set_hub(
+						t_coder *NONNULL self,
+						t_hub *NULLABLE hub
 						);
 
 /* THREAD LIFECYCLE */

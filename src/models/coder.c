@@ -16,8 +16,7 @@ void	coder__init(
 	t_coder *NONNULL self,
 	int id,
 	t_config *NONNULL config,
-	t_logger *NULLABLE logger,
-	t_hub *NULLABLE hub
+	t_logger *NULLABLE logger
 )
 {
 	self->__time_to_compile = config->time_to_compile;
@@ -29,7 +28,7 @@ void	coder__init(
 	self->__last_compile = get_sim_time(false);
 	self->__id = id;
 	self->__state = COMPILE;
-	self->__hub = hub;
+	self->__hub = NULL;
 	self->__logger = logger;
 	self->__left_usb = NULL;
 	self->__right_usb = NULL;
@@ -51,7 +50,8 @@ t_coder	*coder__create(
 		print_error("FAILED ALLOCATING A CODER INSTANCE", false);
 		return (NULL);
 	}
-	coder__init(result, id, config, logger, hub);
+	coder__init(result, id, config, logger);
+	coder__set_hub(result, hub);
 	return (result);
 }
 
