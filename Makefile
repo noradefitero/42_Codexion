@@ -32,6 +32,7 @@ SRCS =	src/main.c \
 		src/models/schedulers/fifo_queue.c \
 		src/models/schedulers/edf.c \
 		src/models/schedulers/edf_queue.c \
+		src/models/schedulers/edf_ops.c \
 		src/models/usb.c \
 		src/models/usb_api.c \
 		src/utils/ft/ft_calloc.c \

@@ -21,7 +21,7 @@
 #include "edf.h"
 #include "../coder.h"
 
-static int	edf__at(t_edf *NONNULL self, int index)
+int	edf__at(t_edf *NONNULL self, int index)
 {
 	return ((self->__head + index) % MAX_CODERS);
 }
@@ -41,7 +41,7 @@ static void	edf__swap(t_edf *NONNULL self, int a, int b)
 }
 
 /* Bubble `index` up while its deadline is earlier than its parent's. */
-static void	edf__sift_up(t_edf *NONNULL self, int index)
+void	edf__sift_up(t_edf *NONNULL self, int index)
 {
 	int	parent;
 
@@ -57,7 +57,7 @@ static void	edf__sift_up(t_edf *NONNULL self, int index)
 }
 
 /* Sink `index` down while a child has an earlier deadline. */
-static void	edf__sift_down(t_edf *NONNULL self, int index)
+void	edf__sift_down(t_edf *NONNULL self, int index)
 {
 	int	left;
 	int	right;
@@ -81,55 +81,4 @@ static void	edf__sift_down(t_edf *NONNULL self, int index)
 		edf__swap(self, index, smallest);
 		index = smallest;
 	}
-}
-
-int	edf__put(
-	t_edf *NONNULL self,
-	t_coder *NONNULL coder
-)
-{
-	if (self->__size == MAX_CODERS)
-		return (1);
-	self->__queue[edf__at(self, self->__size)] = coder;
-	self->__size++;
-	self->__tail = edf__at(self, self->__size);
-	edf__sift_up(self, self->__size - 1);
-	return (0);
-}
-
-void	edf__pop(t_edf *NONNULL self, t_coder *NONNULL coder)
-{
-	int	last;
-
-	if (self->__size == 0 || self->__queue[self->__head] != coder)
-		return ;
-	self->__size--;
-	last = edf__at(self, self->__size);
-	self->__queue[self->__head] = self->__queue[last];
-	self->__queue[last] = NULL;
-	self->__tail = last;
-	edf__sift_down(self, 0);
-}
-
-void	edf__delete(t_edf *NONNULL self, t_coder *NONNULL coder)
-{
-	int	i;
-	int	last;
-
-	i = 0;
-	while (i < self->__size
-		&& self->__queue[edf__at(self, i)] != coder)
-		i++;
-	if (i == self->__size)
-		return ;
-	self->__size--;
-	last = edf__at(self, self->__size);
-	if (edf__at(self, i) != last)
-	{
-		self->__queue[edf__at(self, i)] = self->__queue[last];
-		edf__sift_up(self, i);
-		edf__sift_down(self, i);
-	}
-	self->__queue[last] = NULL;
-	self->__tail = last;
 }

@@ -34,6 +34,9 @@ void				edf__init(t_edf *NONNULL self);
 t_edf *NULLABLE		edf__create(void);
 void				edf__reset(t_edf *NONNULL self);
 void				edf__destroy(t_edf *NONNULL edf);
+int					edf__at(t_edf *NONNULL self, int index);
+void				edf__sift_up(t_edf *NONNULL self, int index);
+void				edf__sift_down(t_edf *NONNULL self, int index);
 
 /* GETTERS */
 static inline t_coder *NULLABLE	edf__first(t_edf *NONNULL self)
