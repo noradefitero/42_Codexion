@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/codexion",
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "build-debug",
-			"args": ["2", "35", "18", "5", "4", "20", "0", "fifo"]
+			"args": ["1000", "100", "18", "5", "4", "200", "0", "fifo"]
         }
     ]
 }
