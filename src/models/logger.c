@@ -12,6 +12,17 @@
 
 #include "logger.h"
 
+static int	logger__init_sync(t_logger *NONNULL self)
+{
+	if (pthread_mutex_init(&self->__mutex, NULL))
+		return (print_error("FAILED INITIALIZING LOGGER MUTEX", false));
+	self->__mutex_initialized = true;
+	if (pthread_cond_init(&self->__cond, NULL))
+		return (print_error("FAILED INITIALIZING LOGGER COND", false));
+	self->__cond_initialized = true;
+	return (0);
+}
+
 int	logger__init(t_logger *NONNULL self, size_t n_coders)
 {
 	self->___thread = (pthread_t)0;
@@ -31,18 +42,11 @@ int	logger__init(t_logger *NONNULL self, size_t n_coders)
 		return (print_error("FAILED ALLOCATING LOGGER POOL", false));
 	}
 	self->__queue_init = true;
-	if (pthread_mutex_init(&self->__mutex, NULL))
+	if (logger__init_sync(self))
 	{
 		logger__reset(self);
-		return (print_error("FAILED INITIALIZING LOGGER MUTEX", false));
+		return (1);
 	}
-	self->__mutex_initialized = true;
-	if (pthread_cond_init(&self->__cond, NULL))
-	{
-		logger__reset(self);
-		return (print_error("FAILED INITIALIZING LOGGER COND", false));
-	}
-	self->__cond_initialized = true;
 	return (0);
 }
 
