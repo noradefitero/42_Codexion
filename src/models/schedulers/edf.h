@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/21 09:36:50 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/25 06:19:54 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/09/14 11:33:09 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,15 @@
 
 # include <pthread.h>
 # include <stdbool.h>
-
-typedef struct s_edf_node
-{
-	t_coder *NONNULL				content;
-	struct s_edf_node *NULLABLE	next;
-}	t_edf_node;
+# include <string.h>
 
 typedef struct s_edf
 {
-	t_scheduler				super;
-	t_edf_node *NULLABLE	__queue;
-	t_edf_node *NULLABLE	__queue_tail;
-	bool					__active;
+	t_scheduler			super;
+	t_coder *NULLABLE	__queue[MAX_CODERS];
+	int					__head;
+	int					__tail;
+	int					__size;
 }	t_edf;
 
 void				edf__init(t_edf *NONNULL self);
@@ -42,9 +38,9 @@ void				edf__destroy(t_edf *NONNULL edf);
 /* GETTERS */
 static inline t_coder *NULLABLE	edf__first(t_edf *NONNULL self)
 {
-	if (self->__queue == NULL)
+	if (self->__size < 1)
 		return (NULL);
-	return (self->__queue->content);
+	return (self->__queue[self->__head]);
 }
 
 int					edf__put(
@@ -55,6 +51,6 @@ void				edf__pop(
 						t_edf *NONNULL self,
 						t_coder *NONNULL coder
 						);
-void				edf__clear_queue(t_edf *NONNULL self);
+void				edf__delete(t_edf *NONNULL self, t_coder *NONNULL coder);
 
 #endif /* EDF_H */

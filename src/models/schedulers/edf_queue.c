@@ -5,28 +5,82 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/24 20:03:43 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/25 06:19:54 by dde-fite         ###   ########.fr       */
+/*   Created: 2026/08/23 13:37:25 by dde-fite          #+#    #+#             */
+/*   Updated: 2026/09/14 12:00:00 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+ * EDF is a min-heap living on the same rotating window as FIFO
+ * (head, tail, size). All positions are logical heap indexes; the
+ * physical slot is (head + index) % MAX_CODERS, so the heap rotates
+ * freely over the circular buffer and the freed slots are reused.
+ * put / pop / delete are O(log n) thanks to sift_up / sift_down.
+ */
+
 #include "edf.h"
+#include "../coder.h"
 
-static inline t_edf_node *NULLABLE	edf__new_node(t_coder *NONNULL content)
+static int	edf__at(t_edf *NONNULL self, int index)
 {
-	t_edf_node	*node;
-
-	node = ft_calloc(1, sizeof(t_edf_node));
-	if (!node)
-		return (NULL);
-	node->content = content;
-	node->next = NULL;
-	return (node);
+	return ((self->__head + index) % MAX_CODERS);
 }
 
-void	edf__update(t_edf *NONNULL self)
+static int	edf__before(t_coder *NONNULL a, t_coder *NONNULL b)
 {
-	(void)self;
+	return (coder__deadline(a) < coder__deadline(b));
+}
+
+static void	edf__swap(t_edf *NONNULL self, int a, int b)
+{
+	t_coder	*tmp;
+
+	tmp = self->__queue[edf__at(self, a)];
+	self->__queue[edf__at(self, a)] = self->__queue[edf__at(self, b)];
+	self->__queue[edf__at(self, b)] = tmp;
+}
+
+/* Bubble `index` up while its deadline is earlier than its parent's. */
+static void	edf__sift_up(t_edf *NONNULL self, int index)
+{
+	int	parent;
+
+	while (index > 0)
+	{
+		parent = (index - 1) / 2;
+		if (!edf__before(self->__queue[edf__at(self, index)],
+				self->__queue[edf__at(self, parent)]))
+			break ;
+		edf__swap(self, index, parent);
+		index = parent;
+	}
+}
+
+/* Sink `index` down while a child has an earlier deadline. */
+static void	edf__sift_down(t_edf *NONNULL self, int index)
+{
+	int	left;
+	int	right;
+	int	smallest;
+
+	while (true)
+	{
+		left = index * 2 + 1;
+		right = left + 1;
+		smallest = index;
+		if (left < self->__size
+			&& edf__before(self->__queue[edf__at(self, left)],
+				self->__queue[edf__at(self, smallest)]))
+			smallest = left;
+		if (right < self->__size
+			&& edf__before(self->__queue[edf__at(self, right)],
+				self->__queue[edf__at(self, smallest)]))
+			smallest = right;
+		if (smallest == index)
+			return ;
+		edf__swap(self, index, smallest);
+		index = smallest;
+	}
 }
 
 int	edf__put(
@@ -34,64 +88,48 @@ int	edf__put(
 	t_coder *NONNULL coder
 )
 {
-	t_edf_node *NULLABLE	new;
-
-	if (!self->__active)
+	if (self->__size == MAX_CODERS)
 		return (1);
-	new = edf__new_node(coder);
-	if (!new)
-		return (1);
-	if (self->__queue_tail)
-		self->__queue_tail->next = new;
-	else
-		self->__queue = new;
-	self->__queue_tail = new;
-	edf__update(self);
+	self->__queue[edf__at(self, self->__size)] = coder;
+	self->__size++;
+	self->__tail = edf__at(self, self->__size);
+	edf__sift_up(self, self->__size - 1);
 	return (0);
 }
 
 void	edf__pop(t_edf *NONNULL self, t_coder *NONNULL coder)
 {
-	t_edf_node	*current;
-	t_edf_node	*previous;
+	int	last;
 
-	if (!self->__active)
+	if (self->__size == 0 || self->__queue[self->__head] != coder)
 		return ;
-	previous = NULL;
-	current = self->__queue;
-	while (current)
-	{
-		if (current->content == coder)
-		{
-			if (previous)
-				previous->next = current->next;
-			else
-				self->__queue = current->next;
-			if (!current->next)
-				self->__queue_tail = previous;
-			free(current);
-			return ;
-		}
-		previous = current;
-		current = current->next;
-	}
-	edf__update(self);
+	self->__size--;
+	last = edf__at(self, self->__size);
+	self->__queue[self->__head] = self->__queue[last];
+	self->__queue[last] = NULL;
+	self->__tail = last;
+	edf__sift_down(self, 0);
 }
 
-void	edf__clear_queue(t_edf *NONNULL self)
+void	edf__delete(t_edf *NONNULL self, t_coder *NONNULL coder)
 {
-	t_edf_node	*current;
-	t_edf_node	*next;
+	int	i;
+	int	last;
 
-	self->__active = false;
-	current = self->__queue;
-	self->__queue = NULL;
-	self->__queue_tail = NULL;
-	while (current)
+	i = 0;
+	while (i < self->__size
+		&& self->__queue[edf__at(self, i)] != coder)
+		i++;
+	if (i == self->__size)
+		return ;
+	self->__size--;
+	last = edf__at(self, self->__size);
+	if (edf__at(self, i) != last)
 	{
-		next = current->next;
-		free(current);
-		current = next;
+		self->__queue[edf__at(self, i)] = self->__queue[last];
+		edf__sift_up(self, i);
+		edf__sift_down(self, i);
 	}
-	self->__queue = NULL;
+	self->__queue[last] = NULL;
+	self->__tail = last;
 }
