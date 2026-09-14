@@ -112,6 +112,10 @@ int					coder__init_thread(t_coder *NONNULL self);
 int					coder__join_thread(t_coder *NONNULL self);
 
 /* THREAD */
+int					coder__th_own_usb(
+						t_coder *NONNULL self,
+						t_usb *NONNULL usb
+						);
 void *NULLABLE		coder__th_start_routine(t_coder *NONNULL self);
 
 #endif /* CODER_H */

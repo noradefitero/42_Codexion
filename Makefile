@@ -17,6 +17,7 @@ SRCS =	src/main.c \
 		src/models/coder.c \
 		src/models/coder_setters.c \
 		src/models/coder_th.c \
+		src/models/coder_th_usb.c \
 		src/models/coder_th_lifecycle.c \
 		src/models/hub.c \
 		src/models/hub_events.c \
