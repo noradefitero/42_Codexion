@@ -58,3 +58,4 @@ dkms.conf
 *.dwo
 
 *subject.pdf
+graphify-out/
