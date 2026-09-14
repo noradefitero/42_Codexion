@@ -22,6 +22,7 @@ SRCS =	src/main.c \
 		src/models/hub.c \
 		src/models/hub_events.c \
 		src/models/hub_lifecycle.c \
+		src/models/hub_threads.c \
 		src/models/logger.c \
 		src/models/logger_queue.c \
 		src/models/logger_th.c \
