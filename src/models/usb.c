@@ -12,6 +12,20 @@
 
 #include "usb.h"
 
+static int	usb__init_scheduler(t_usb *NONNULL self, t_config *NONNULL config)
+{
+	if (config->scheduler == FIFO)
+		self->__scheduler = (t_scheduler *)fifo__create();
+	else if (config->scheduler == EDF)
+		self->__scheduler = (t_scheduler *)edf__create();
+	if (!self->__scheduler)
+	{
+		usb__reset(self);
+		return (1);
+	}
+	return (0);
+}
+
 int	usb__init(
 	t_usb *NONNULL self,
 	t_config *NONNULL config
@@ -34,15 +48,8 @@ int	usb__init(
 		return (print_error("FAILED INITIALIZING LOGGER COND", false));
 	}
 	self->__cond_initialized = true;
-	if (config->scheduler == FIFO)
-		self->__scheduler = (t_scheduler *)fifo__create();
-	else if (config->scheduler == EDF)
-		self->__scheduler = (t_scheduler *)edf__create();
-	if (!self->__scheduler)
-	{
-		usb__reset(self);
+	if (usb__init_scheduler(self, config))
 		return (1);
-	}
 	self->__active = true;
 	return (0);
 }
