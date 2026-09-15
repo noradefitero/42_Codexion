@@ -24,7 +24,7 @@ void	log_state(int n_coder, t_ms tm, t_log_mess state)
 {
 	static pthread_mutex_t	mutex = PTHREAD_MUTEX_INITIALIZER;
 	static bool				burned = false;
-	const char				*template = "%d %d %s\n";
+	const char				*template = "%lld %d %s\n";
 
 	pthread_mutex_lock(&mutex);
 	if (burned)
