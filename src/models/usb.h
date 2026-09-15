@@ -34,6 +34,7 @@ typedef struct s_usb
 	bool					__cond_initialized;
 	int						__dongle_cooldown;
 	t_ms					__last_used;
+	t_coder *NULLABLE		__holder;
 	bool					__active;
 }	t_usb;
 
@@ -68,6 +69,11 @@ static inline t_ms	usb__cooldown_deadline(const t_usb *NONNULL self)
 static inline t_coder *NULLABLE	usb__first(t_usb *NONNULL self)
 {
 	return (scheduler__first(self->__scheduler));
+}
+
+static inline t_coder *NULLABLE	usb__holder(const t_usb *NONNULL self)
+{
+	return (self->__holder);
 }
 
 int					usb__acquire(

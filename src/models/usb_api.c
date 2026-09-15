@@ -40,7 +40,8 @@ void	usb__release_safe(
 )
 {
 	pthread_mutex_lock(&self->__mutex);
-	scheduler__pop(self->__scheduler, coder);
+	if (self->__holder == coder)
+		self->__holder = NULL;
 	self->__last_used = get_time();
 	pthread_cond_broadcast(&self->__cond);
 	pthread_mutex_unlock(&self->__mutex);

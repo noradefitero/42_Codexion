@@ -33,6 +33,7 @@ int	usb__init(
 {
 	self->__dongle_cooldown = config->dongle_cooldown;
 	self->__last_used = -1;
+	self->__holder = NULL;
 	self->__scheduler = NULL;
 	self->__mutex_initialized = false;
 	self->__cond_initialized = false;

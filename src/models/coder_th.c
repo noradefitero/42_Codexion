@@ -29,7 +29,7 @@ static inline int	coder__th_compile(t_coder *NONNULL self)
 		return (-1);
 	if (coder__th_own_usb(self, second))
 	{
-		usb__delete_safe(first, self);
+		usb__release_safe(first, self);
 		return (-1);
 	}
 	logger__add_to_queue(self->__logger, self->__id, COMPILING);
