@@ -56,8 +56,28 @@ static inline void	coder__th_refactor(t_coder *NONNULL self)
 	self->__state = COMPILE;
 }
 
+/*
+* N == 1: the single coder has no second dongle, so compiling is
+* impossible. Take its only dongle once, then wait for the shutdown
+* the monitor triggers once time_to_burnout passes.
+*/
+static void *NULLABLE	coder__th_n1_wait_burn(t_coder *NONNULL self)
+{
+	if (coder__th_own_usb(self, self->__left_usb))
+		return (NULL);
+	pthread_mutex_lock(usb__mutex(self->__left_usb));
+	while (hub__is_running(self->__hub))
+		pthread_cond_wait(usb__cond(self->__left_usb),
+			usb__mutex(self->__left_usb));
+	pthread_mutex_unlock(usb__mutex(self->__left_usb));
+	usb__release_safe(self->__left_usb, self);
+	return (NULL);
+}
+
 void *NULLABLE	coder__th_start_routine(t_coder *NONNULL self)
 {
+	if (self->__right_usb == NULL)
+		return (coder__th_n1_wait_burn(self));
 	while (hub__is_running(self->__hub)
 		&& self->__compiles < self->__number_of_compiles_required)
 	{
