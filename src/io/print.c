@@ -24,7 +24,6 @@ void	log_state(int n_coder, t_ms tm, t_log_mess state)
 {
 	static pthread_mutex_t	mutex = PTHREAD_MUTEX_INITIALIZER;
 	static bool				burned = false;
-	const char				*template = "%lld %d %s\n";
 
 	pthread_mutex_lock(&mutex);
 	if (burned)
@@ -36,13 +35,13 @@ void	log_state(int n_coder, t_ms tm, t_log_mess state)
 		burned = true;
 	pthread_mutex_unlock(&mutex);
 	if (state == TAKEN_DONGLE)
-		printf(template, tm, n_coder, TAKEN_DONGLE_MESS);
+		printf("%lld %d %s\n", tm, n_coder, TAKEN_DONGLE_MESS);
 	else if (state == COMPILING)
-		printf(template, tm, n_coder, COMPILING_MESS);
+		printf("%lld %d %s\n", tm, n_coder, COMPILING_MESS);
 	else if (state == DEBUGGING)
-		printf(template, tm, n_coder, DEBUGGING_MESS);
+		printf("%lld %d %s\n", tm, n_coder, DEBUGGING_MESS);
 	else if (state == REFACTORING)
-		printf(template, tm, n_coder, REFACTORING_MESS);
+		printf("%lld %d %s\n", tm, n_coder, REFACTORING_MESS);
 	else if (state == BURNED)
-		fprintf(stderr, template, tm, n_coder, BURNED_MESS);
+		printf("%lld %d %s\n", tm, n_coder, BURNED_MESS);
 }
