@@ -11,12 +11,13 @@
 /* ************************************************************************** */
 
 #include "ft.h"
+#include <stdint.h>
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
 	void	*ptr;
 
-	if (nmemb * size > SIZE_MAX)
+	if (size && nmemb > SIZE_MAX / size)
 		return (NULL);
 	ptr = malloc(nmemb * size);
 	if (!ptr)
