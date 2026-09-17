@@ -16,11 +16,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: "Prepare build"
+      - name: Install Bear
         run: |
-          mkdir -pv Build
-          cd Build
-          make ..
+          sudo apt-get update
+          sudo apt-get install -y bear
+
+      - name: Build
+        run: |
+          mkdir -p Build
+          bear --output Build/compile_commands.json -- make
 
       - uses: whisperity/codechecker-analysis-action@v1
         id: codechecker
