@@ -6,11 +6,12 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 17:09:27 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/25 08:27:57 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/09/17 03:51:16 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft.h"
+#include <stdint.h>
 #include <stdlib.h>
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
