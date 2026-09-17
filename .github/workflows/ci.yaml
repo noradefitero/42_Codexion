@@ -10,3 +10,24 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: 42School/norminette@3.3.60
+  code-checker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Prepare build"
+        run: |
+          mkdir -pv Build
+          cd Build
+          make ..
+
+      - uses: whisperity/codechecker-analysis-action@v1
+        id: codechecker
+        with:
+          logfile: ${{ github.workspace }}/Build/compile_commands.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "CodeChecker Bug Reports"
+          path: ${{ steps.codechecker.outputs.result-html-dir }}
