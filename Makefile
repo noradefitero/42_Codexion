@@ -61,4 +61,10 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+init-repo:
+	@python3 bin/pre-commit-4.6.2.pyz install
+
+pre-commit:
+	@python3 bin/pre-commit-4.6.2.pyz run --all-files
+
+.PHONY: all clean fclean re init-repo pre-commit
