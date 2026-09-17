@@ -1,0 +1,12 @@
+name: ci
+
+on:
+  push:
+
+jobs:
+  norminette:
+    runs-on: ubuntu-latest
+    name: norminette
+    steps:
+    - uses: actions/checkout@v4
+    - uses: 42School/norminette@3.3.60
