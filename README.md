@@ -5,8 +5,11 @@
     <h3>Dining Philosophers + making C OOP</h3>
 </div>
 <div align="center">
-    	<img alt="Pending score at 42" src="https://img.shields.io/badge/pending/100-yellow?logo=42&logoColor=white">
-		<img alt="MIT license" src="https://img.shields.io/badge/license-MIT-orange">
+    	<a href="https://projects.intra.42.fr/projects/codexion/projects_users/4969327">
+			<img height="20px" src="https://42cv.dev/api/badge/cmtlxxq4r000y0kp4ak8vz11h/project/4969327" alt="dde-fite's 42 Codexion Score" />
+		</a>
+		<img alt="" src="https://img.shields.io/github/actions/workflow/status/noradefitero/42_Codexion/ci.yaml">
+		<img alt="" src="https://img.shields.io/github/license/noradefitero/42_Codexion">
 </div>
 
 ---
@@ -154,9 +157,7 @@ hold.
 
 ## Instructions
 ### Prerequisites
-Must run on a POSIX OS (Linux, macOS, BSD...). Built and tested on macOS;
-the `NONNULL`/`NULLABLE` annotations in `annotations.h` are checked by clang
-and compile away on gcc.
+Must run on a POSIX OS (Linux, macOS, BSD...). Tested on macOS and Ubuntu.
 
 For compiling:
 - Clang or gcc
@@ -170,9 +171,6 @@ make all
 ```
 
 ### Usage
-The block below is the program's own `help` output, verbatim, including the
-`-\--` rendering and the `numbers_of_compiles_required` typo (both live in
-the code, not in this README):
 ```bash
 $> ./codexion help
 codexion Usage
@@ -213,16 +211,27 @@ Arguments:
 #### Burning case
 ```bash
 $> ./codexion 2 20 34 10 34 20 50 fifo
-0 1 has taken a dongle
-0 1 has taken a dongle
-0 1 is compiling
-21 2 burned out
+0 2 has taken a dongle
+0 2 has taken a dongle
+0 2 is compiling
+21 1 burned out
 
 ```
 
+All coders start at the same instant (the hub opens a start gate once every
+coder thread exists), so either coder may grab both dongles first; the one
+left waiting burns out around time_to_burnout.
+
+#### System limits
+Each coder runs on its own thread, so large `number_of_coders` values hit
+OS limits on the number of threads a process may create (macOS commonly
+allows a few thousand). When thread creation fails, the program prints
+`FAILED CREATING CODER THREAD`, ends the simulation cleanly, and exits
+with a non-zero status — no crash, no leaked resources. Keep the coder
+count within the limits of your machine (the subject's own tests use
+small values, typically up to a couple hundred coders).
+
 ## Resources
-<!-- TODO(author): prune this list to the links you actually opened. A short
-     list of real references reads more human than a full bibliography. -->
 - [Dining philosophers problem at Wikipedia](https://en.wikipedia.org/wiki/Dining_philosophers_problem)
 ### Manual pages
 - macOS man pages
