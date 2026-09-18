@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - uses: 42School/norminette@9e9fd09b75ed89be4e1e2cc339674eabefac833e # 3.3.60
         with:
-          args: "-c 'norminette -R CheckForbiddenSourceHeader src'"
+          args: "-R CheckForbiddenSourceHeader"
 
   testing:
     name: regression tests
@@ -40,6 +40,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          submodules: recursive
       - name: Build and run regression suite
         run: make test
 
@@ -52,6 +54,8 @@ jobs:
       UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          submodules: recursive
       - name: Build with sanitizers and run regression suite
         run: make fclean && make SANITIZE=1 test
 
@@ -61,6 +65,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          submodules: recursive
       - name: 42valgrind Leak checker
         uses: solareenlo/42valgrind-action@v1.0.3
         with:
