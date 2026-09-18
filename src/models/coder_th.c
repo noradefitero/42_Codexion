@@ -74,7 +74,7 @@ static void *NULLABLE	coder__th_n1_wait_burn(t_coder *NONNULL self)
 	if (coder__th_own_usb(self, self->__left_usb))
 		return (NULL);
 	pthread_mutex_lock(usb__mutex(self->__left_usb));
-	while (hub__is_running(self->__hub))
+	while (self->__left_usb->__active)
 		pthread_cond_wait(usb__cond(self->__left_usb),
 			usb__mutex(self->__left_usb));
 	pthread_mutex_unlock(usb__mutex(self->__left_usb));

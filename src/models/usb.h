@@ -92,6 +92,6 @@ void				usb__delete_safe(
 						t_usb *NONNULL self,
 						t_coder *NONNULL coder
 						);
-void				usb__wake_safe(t_usb *NONNULL self);
+void				usb__stop_safe(t_usb *NONNULL self);
 
 #endif /* USB_H */

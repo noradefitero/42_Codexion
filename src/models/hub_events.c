@@ -44,7 +44,7 @@ void	hub__end(t_hub *NONNULL self)
 	i = 0;
 	while (i < n_usbs)
 	{
-		usb__wake_safe(self->__usbs[i]);
+		usb__stop_safe(self->__usbs[i]);
 		i++;
 	}
 	logger__wake(&self->__logger);

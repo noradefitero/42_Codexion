@@ -13,15 +13,18 @@
 #include "coder.h"
 #include "hub.h"
 
-static inline int	coder__th_wait_dongle_cooldown(
-	t_coder *NONNULL self,
-	t_usb *NONNULL usb
-)
+/*
+* Waits for the dongle cooldown to pass while the dongle stays active.
+* hub__end stops the dongle (usb__stop_safe) and broadcasts, so a coder
+* sleeping here wakes up, sees the dead flag and bails out without ever
+* locking the hub while holding the dongle mutex.
+*/
+static inline int	coder__th_wait_dongle_cooldown(t_usb *NONNULL usb)
 {
 	t_ms			deadline;
 	struct timespec	ts_deadline;
 
-	while (hub__is_running(self->__hub))
+	while (usb->__active)
 	{
 		deadline = usb__cooldown_deadline(usb);
 		if (deadline == 0 || deadline <= get_time())
@@ -47,13 +50,11 @@ int	coder__th_own_usb(t_coder *NONNULL self, t_usb *NONNULL usb)
 		pthread_mutex_unlock(usb__mutex(usb));
 		return (-1);
 	}
-	while (usb__holder(usb) || usb__first(usb) != self)
-	{
-		if (!hub__is_running(self->__hub))
-			return (coder__th_own_usb_failed(self, usb));
+	while (usb->__active && (usb__holder(usb) || usb__first(usb) != self))
 		pthread_cond_wait(usb__cond(usb), usb__mutex(usb));
-	}
-	if (coder__th_wait_dongle_cooldown(self, usb) == -1)
+	if (!usb->__active)
+		return (coder__th_own_usb_failed(self, usb));
+	if (coder__th_wait_dongle_cooldown(usb) == -1)
 		return (coder__th_own_usb_failed(self, usb));
 	usb__delete(usb, self);
 	usb->__holder = self;
