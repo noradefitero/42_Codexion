@@ -24,7 +24,11 @@ static int	hub__init_core(t_hub *NONNULL self)
 		hub__reset(self);
 		return (-1);
 	}
-	if (logger__init(&self->__logger, self->__config.number_of_coders))
+	if (logger__init(
+			&self->__logger,
+			self->__config.number_of_coders,
+			self->__config.number_of_compiles_required
+		))
 	{
 		hub__reset(self);
 		return (-1);

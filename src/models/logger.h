@@ -13,8 +13,7 @@
 #ifndef LOGGER_H
 # define LOGGER_H
 
-# define LOG_POOL_MULTIPLIER 2
-# define LOG_POOL_REALLOC_MULTIPLIER 1.5
+# define LOG_POOL_CAP 16384
 
 # include "annotations.h"
 # include "../io/print.h"
@@ -25,8 +24,8 @@
 
 typedef struct s_log
 {
-	int						coder_id;
 	t_ms					timestamp;
+	int						coder_id;
 	t_log_mess				state;
 }	t_log;
 
@@ -47,8 +46,15 @@ typedef struct s_logger
 	size_t						__size;
 }	t_logger;
 
-int					logger__init(t_logger *NONNULL self, size_t n_coders);
-t_logger *NULLABLE	logger__create(size_t n_coders);
+int					logger__init(
+						t_logger *NONNULL self,
+						size_t n_coders,
+						int compiles_required
+						);
+t_logger *NULLABLE	logger__create(
+						size_t n_coders,
+						int compiles_required
+						);
 void				logger__reset(t_logger *NONNULL self);
 void				logger__destroy(t_logger *NULLABLE logger);
 

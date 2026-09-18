@@ -23,15 +23,27 @@ static int	logger__init_sync(t_logger *NONNULL self)
 	return (0);
 }
 
-int	logger__init(t_logger *NONNULL self, size_t n_coders)
+/*
+* Sizes the pool for the whole run up front: each full coder cycle emits
+* five logs (two dongle takes, compiling, debugging, refactoring) plus a
+* couple of partial ones, and the monitor can add one burnout log. The
+* cap bounds the allocation when compiles_required is huge.
+*/
+int	logger__init(
+	t_logger *NONNULL self,
+	size_t n_coders,
+	int compiles_required
+)
 {
+	self->__pool_size = n_coders * (5 * (size_t)compiles_required + 2) + 1;
+	if (self->__pool_size > LOG_POOL_CAP)
+		self->__pool_size = LOG_POOL_CAP;
 	self->___thread = (pthread_t)0;
 	self->__thread_active = false;
 	self->__exit_flag = false;
 	self->__head = 0;
 	self->__tail = 0;
 	self->__size = 0;
-	self->__pool_size = n_coders * LOG_POOL_MULTIPLIER;
 	self->__queue_init = false;
 	self->__cond_initialized = false;
 	self->__mutex_initialized = false;
@@ -50,7 +62,7 @@ int	logger__init(t_logger *NONNULL self, size_t n_coders)
 	return (0);
 }
 
-t_logger *NULLABLE	logger__create(size_t n_coders)
+t_logger *NULLABLE	logger__create(size_t n_coders, int compiles_required)
 {
 	t_logger	*result;
 
@@ -60,7 +72,7 @@ t_logger *NULLABLE	logger__create(size_t n_coders)
 		print_error("FAILED ALLOCATING A LOGGER INSTANCE", false);
 		return (NULL);
 	}
-	if (logger__init(result, n_coders))
+	if (logger__init(result, n_coders, compiles_required))
 	{
 		logger__destroy(result);
 		return (NULL);

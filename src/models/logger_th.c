@@ -15,13 +15,23 @@
 /*
 * Drains the queue until it is empty AND a stop was requested, so every log
 * produced while the simulation was running gets printed before exiting.
+* Timestamps are clamped to the previous printed one: producers sample the
+* clock before taking the queue mutex, so entries can arrive slightly out
+* of chronological order and the printed stream must stay monotonic.
 */
 static void	*logger__th_start_routine(t_logger *NONNULL self)
 {
 	t_log	buf;
+	t_ms	prev;
 
+	prev = 0;
 	while (logger__pop_queue(self, &buf))
+	{
+		if (buf.timestamp < prev)
+			buf.timestamp = prev;
+		prev = buf.timestamp;
 		log_state(buf.coder_id, buf.timestamp, buf.state);
+	}
 	return (NULL);
 }
 
