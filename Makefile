@@ -4,6 +4,9 @@ CFLAGS = -Wall -Wextra -pthread -Isrc/include -march=native
 CLINKFLAGS = -fno-semantic-interposition -fno-plt
 ifdef DEBUG
     CFLAGS += -g -fdiagnostics-color=always -O0
+else ifdef SANITIZE
+    CFLAGS += -fsanitize=address,undefined -O1 -g
+    CLINKFLAGS += -fsanitize=address,undefined
 else
     CFLAGS += -Werror -O3
 endif
@@ -54,7 +57,7 @@ $(BUILD)/%.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf $(OBJS)
+	rm -rf $(BUILD)
 
 fclean: clean
 	rm -rf $(NAME)
@@ -67,4 +70,41 @@ init-repo:
 pre-commit:
 	@python3 bin/pre-commit-4.6.2.pyz run --all-files
 
-.PHONY: all clean fclean re init-repo pre-commit
+test: unit
+asan: unit_sanitize
+valgrind: unit_valgrind
+
+unit:
+	$(MAKE) -C tests run
+
+unit_sanitize:
+	$(MAKE) -C tests run_sanitize
+
+unit_valgrind:
+	$(MAKE) -C tests run_valgrind
+
+
+THIS_DIR = $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+
+docker-all:
+	@docker run --workdir $(HOME) --entrypoint make -v $(THIS_DIR):$(HOME) mooreryan/valgrind all
+
+docker-re:
+	@docker run --workdir $(HOME) --entrypoint make -v $(THIS_DIR):$(HOME) mooreryan/valgrind re
+
+docker-run:
+	@docker run --workdir $(HOME) --entrypoint ./codexion -v $(THIS_DIR):$(HOME) mooreryan/valgrind $(ARGS)
+
+docker-valgrind:
+	@docker run --workdir $(HOME) -v $(THIS_DIR):$(HOME) mooreryan/valgrind --leak-check=full --error-exitcode=1 ./codexion $(ARGS)
+
+docker-test: clean
+	@docker run --workdir $(HOME) --entrypoint make -v $(THIS_DIR):$(HOME) mooreryan/valgrind test
+
+docker-test-sanitize: clean
+	@docker run --workdir $(HOME) --entrypoint make -v $(THIS_DIR):$(HOME) mooreryan/valgrind asan
+
+docker-test-valgrind: clean
+	@docker run --workdir $(HOME) --entrypoint make -v $(THIS_DIR):$(HOME) mooreryan/valgrind valgrind
+
+.PHONY: all clean fclean re init-repo pre-commit test unit unit_sanitize asan
