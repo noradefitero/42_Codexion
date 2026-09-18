@@ -58,5 +58,10 @@ dkms.conf
 *.dwo
 
 *subject.pdf
+
+# Local artifacts
+en.norm-1.pdf
+INFORME_TESTING.md
+
 graphify-out/
 build/
