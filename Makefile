@@ -65,6 +65,7 @@ fclean: clean
 re: fclean all
 
 init-repo:
+	@git submodule init
 	@python3 bin/pre-commit-4.6.2.pyz install
 
 pre-commit:
