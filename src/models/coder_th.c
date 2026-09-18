@@ -13,6 +13,14 @@
 #include "coder.h"
 #include "hub.h"
 
+/*
+* Even coders grab their right dongle first, odd coders their left one.
+* When every coder starts at the same instant, symmetric grabbing makes
+* each of them hold one dongle while waiting for the other, so the last
+* one in the chain waits N compile cycles and burns out in a feasible
+* configuration. Asymmetric grabbing breaks that chain: neighbours that
+* would wait on each other now contend directly, and losers hold nothing.
+*/
 static inline int	coder__th_compile(t_coder *NONNULL self)
 {
 	t_usb	*first;
@@ -20,7 +28,7 @@ static inline int	coder__th_compile(t_coder *NONNULL self)
 
 	first = self->__left_usb;
 	second = self->__right_usb;
-	if (first > second)
+	if (self->__id % 2 == 0)
 	{
 		first = self->__right_usb;
 		second = self->__left_usb;
