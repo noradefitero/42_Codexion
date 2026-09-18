@@ -2,36 +2,96 @@ name: ci
 
 on:
   push:
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE"
+      - "media/**"
+      - "graphify-out/**"
+      - "*.pdf"
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE"
+      - "media/**"
+      - "graphify-out/**"
+      - "*.pdf"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   norminette:
-    runs-on: ubuntu-latest
     name: norminette
-    steps:
-    - uses: actions/checkout@v4
-    - uses: 42School/norminette@3.3.60
-  code-checker:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: 42School/norminette@9e9fd09b75ed89be4e1e2cc339674eabefac833e # 3.3.60
+        with:
+          args: "-c 'norminette -R CheckForbiddenSourceHeader src'"
 
+  testing:
+    name: regression tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Build and run regression suite
+        run: make test
+
+  sanitizers:
+    name: sanitizers (ASan + UBSan)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Build with sanitizers and run regression suite
+        run: make fclean && make SANITIZE=1 test
+
+  valgrind:
+    name: valgrind
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: 42valgrind Leak checker
+        uses: solareenlo/42valgrind-action@v1.0.3
+        with:
+          flags: 'make fclean && make valgrind'
+
+  pre-commit:
+    name: pre-commit hooks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Run pre-commit
+        run: make pre-commit
+
+  code-checker:
+    name: codechecker static analysis
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - name: Install Bear
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y bear
-
-      - name: Build
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends bear
+      - name: Build with compile database
         run: |
           mkdir -p Build
           bear --output Build/compile_commands.json -- make
-
-      - uses: whisperity/codechecker-analysis-action@v1
+      - uses: whisperity/codechecker-analysis-action@403b61375bca15cdaa5fe7590b863b0b46b9bcad # v1.0.4
         id: codechecker
         with:
           logfile: ${{ github.workspace }}/Build/compile_commands.json
-
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
-          name: "CodeChecker Bug Reports"
+          name: CodeChecker Bug Reports
           path: ${{ steps.codechecker.outputs.result-html-dir }}
