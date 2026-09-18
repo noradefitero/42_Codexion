@@ -22,6 +22,8 @@
 # include <stdlib.h>
 
 # define MONITOR_TICK_US 1000
+# define MONITOR_TICK_MS 1
+# define MONITOR_SLEEP_CAP_MS 10
 
 typedef struct s_hub	t_hub;
 
@@ -32,6 +34,7 @@ typedef struct s_monitor
 	t_coder *NONNULL *NONNULL		__coders;
 	size_t							__n_coders;
 	int								__time_to_burnout;
+	t_ms							__min_left;
 	t_logger *NULLABLE				__logger;
 	t_hub *NULLABLE					__hub; /* t_hub * */
 }	t_monitor;

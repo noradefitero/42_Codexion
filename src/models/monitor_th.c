@@ -13,57 +13,71 @@
 #include "monitor.h"
 #include "hub.h"
 
-static bool	monitor__th_check_if_burned(t_coder *coder, int burning_time)
-{
-	if (coder->__compiles >= coder->__number_of_compiles_required)
-		return (false);
-	return (get_sim_time(false) - coder->__last_compile > burning_time);
-}
-
-static bool	monitor__th_all_done(t_monitor *NONNULL self)
+/*
+* Sweeps every coder once against the same clock sample. Returns the first
+* coder that burned out, or NULL when everyone is alive. Sets all_done when
+* every coder met its compile quota, and stores on the monitor the smallest
+* time left before the nearest burnout deadline.
+*/
+static t_coder *NULLABLE	monitor__th_scan(
+	t_monitor *NONNULL self,
+	t_ms now,
+	bool *NONNULL all_done
+)
 {
 	size_t	i;
+	t_ms	left;
 
+	*all_done = true;
+	self->__min_left = -1;
 	i = 0;
 	while (i < self->__n_coders)
 	{
 		if (self->__coders[i]->__compiles
 			< self->__coders[i]->__number_of_compiles_required)
-			return (false);
+		{
+			*all_done = false;
+			if (now - self->__coders[i]->__last_compile
+				> self->__time_to_burnout)
+				return (self->__coders[i]);
+			left = self->__coders[i]->__last_compile
+				+ self->__time_to_burnout - now;
+			if (self->__min_left == -1 || left < self->__min_left)
+				self->__min_left = left;
+		}
 		i++;
 	}
-	return (true);
+	return (NULL);
 }
 
 /*
-* The monitor is the only watcher: it decides when the simulation ends, either
-* because someone burned out or because every coder met its quota. Both cases
-* funnel through hub__end.
+* The monitor is the only watcher: it decides when the simulation ends,
+* either because someone burned out or because every coder met its quota.
+* Both cases funnel through hub__end. Each sweep samples the clock once
+* and sleeps toward the nearest deadline; within a tick of a deadline the
+* sweep spins, so the burnout message goes out as fast as possible.
 */
 static void	*monitor__th_start_routine(t_monitor *NONNULL self)
 {
-	size_t	i;
+	t_coder	*burned;
+	t_ms	now;
+	bool	all_done;
 
 	while (hub__is_running(self->__hub))
 	{
-		i = 0;
-		while (i < self->__n_coders && hub__is_running(self->__hub))
-		{
-			if (monitor__th_check_if_burned(
-					self->__coders[i], self->__time_to_burnout))
-			{
-				logger__add_to_queue(
-					self->__logger, self->__coders[i]->__id, BURNED);
-				hub__end(self->__hub);
-				return (NULL);
-			}
-			i++;
-		}
-		if (monitor__th_all_done(self))
+		now = get_sim_time(false);
+		burned = monitor__th_scan(self, now, &all_done);
+		if (burned)
+			logger__add_to_queue(self->__logger, burned->__id, BURNED);
+		if (burned || all_done)
 		{
 			hub__end(self->__hub);
 			return (NULL);
 		}
+		if (self->__min_left > MONITOR_SLEEP_CAP_MS)
+			sleep_ms(MONITOR_SLEEP_CAP_MS);
+		else if (self->__min_left > MONITOR_TICK_MS)
+			sleep_ms(self->__min_left - MONITOR_TICK_MS);
 	}
 	return (NULL);
 }
