@@ -42,7 +42,8 @@ void	usb__release_safe(
 	pthread_mutex_lock(&self->__mutex);
 	if (self->__holder == coder)
 		self->__holder = NULL;
-	self->__last_used = get_time();
+	if (self->__dongle_cooldown > 0)
+		self->__last_used = get_time();
 	pthread_cond_broadcast(&self->__cond);
 	pthread_mutex_unlock(&self->__mutex);
 }
