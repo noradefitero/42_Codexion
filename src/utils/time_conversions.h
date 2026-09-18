@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 06:58:39 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/20 07:01:40 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/09/16 16:41:40 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,15 +69,6 @@ static inline struct timespec	ms_to_timespec(const t_ms ms)
 	ts.tv_sec = ms / 1000;
 	ts.tv_nsec = (ms % 1000) * 1000000;
 	return (ts);
-}
-
-/*
-* Returns a useconds_t with values of ms.
-* It converts miliseconds to microseconds.
-*/
-static inline useconds_t	ms_to_useconds(const t_ms ms)
-{
-	return (ms * 1000);
 }
 
 #endif /* TIME_CONVERSIONS_H */
