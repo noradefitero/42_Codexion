@@ -57,3 +57,41 @@ void	hub__wait_end(t_hub *NONNULL self)
 		pthread_cond_wait(&self->__sim_cond, &self->__sim_mutex);
 	pthread_mutex_unlock(&self->__sim_mutex);
 }
+
+/*
+* Coders and the monitor wait here until the hub opened the start gate, so
+* nobody runs before every coder thread exists. If the simulation ended
+* before the gate (thread creation failed), waiters pass through and their
+* regular hub__is_running loops exit right away.
+*/
+void	hub__wait_start(t_hub *NONNULL self)
+{
+	pthread_mutex_lock(&self->__sim_mutex);
+	while (self->__running && !self->__started)
+		pthread_cond_wait(&self->__sim_cond, &self->__sim_mutex);
+	pthread_mutex_unlock(&self->__sim_mutex);
+}
+
+/*
+* Opens the start gate after every thread was created. Stamps every coder
+* deadline from this instant, so the time spent creating threads never
+* eats into time_to_burnout.
+*/
+void	hub__signal_start(t_hub *NONNULL self)
+{
+	const size_t	n_coders = self->__config.number_of_coders;
+	t_ms			now;
+	size_t			i;
+
+	pthread_mutex_lock(&self->__sim_mutex);
+	now = get_sim_time(false);
+	i = 0;
+	while (i < n_coders)
+	{
+		self->__coders[i]->__last_compile = now;
+		i++;
+	}
+	self->__started = true;
+	pthread_mutex_unlock(&self->__sim_mutex);
+	pthread_cond_broadcast(&self->__sim_cond);
+}

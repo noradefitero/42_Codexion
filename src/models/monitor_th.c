@@ -63,6 +63,7 @@ static void	*monitor__th_start_routine(t_monitor *NONNULL self)
 	t_ms	now;
 	bool	all_done;
 
+	hub__wait_start(self->__hub);
 	while (hub__is_running(self->__hub))
 	{
 		now = get_sim_time(false);

@@ -74,6 +74,8 @@ int	hub__run(t_hub *NONNULL self)
 	status = hub__start_threads(self);
 	if (status)
 		hub__end(self);
+	else
+		hub__signal_start(self);
 	hub__wait_end(self);
 	hub__join_threads(self);
 	return (status);

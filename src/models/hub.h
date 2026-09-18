@@ -6,7 +6,7 @@
 /*   By: dde-fite <dde-fite@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/12 03:22:46 by dde-fite          #+#    #+#             */
-/*   Updated: 2026/08/26 12:53:27 by dde-fite         ###   ########.fr       */
+/*   Updated: 2026/09/17 03:20:16 by dde-fite         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ typedef struct s_hub
 {
 	t_config							__config;
 	bool								__running;
+	bool								__started;
 	pthread_mutex_t						__sim_mutex;
 	bool								__sim_mutex_init;
 	pthread_cond_t						__sim_cond;
@@ -55,6 +56,8 @@ void				hub__destroy(t_hub *NULLABLE hub);
 /* SIMULATION CONTROL */
 
 bool				hub__is_running(t_hub *NONNULL self);
+void				hub__wait_start(t_hub *NONNULL self);
+void				hub__signal_start(t_hub *NONNULL self);
 void				hub__end(t_hub *NONNULL self);
 void				hub__wait_end(t_hub *NONNULL self);
 
@@ -82,7 +85,6 @@ static inline t_logger *NONNULL	hub__logger(const t_hub *NONNULL self)
 	return ((t_logger *)&self->__logger);
 }
 
-/* LIFECYCLE */
 /* LIFECYCLE */
 int					hub__create_usbs(t_hub *NONNULL self);
 int					hub__create_coders(

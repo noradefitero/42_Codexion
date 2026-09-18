@@ -84,6 +84,7 @@ static void *NULLABLE	coder__th_n1_wait_burn(t_coder *NONNULL self)
 
 void *NULLABLE	coder__th_start_routine(t_coder *NONNULL self)
 {
+	hub__wait_start(self->__hub);
 	if (self->__right_usb == NULL)
 		return (coder__th_n1_wait_burn(self));
 	while (hub__is_running(self->__hub)
