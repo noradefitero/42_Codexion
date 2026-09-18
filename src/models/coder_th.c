@@ -40,9 +40,9 @@ static inline int	coder__th_compile(t_coder *NONNULL self)
 		usb__release_safe(first, self);
 		return (-1);
 	}
-	logger__add_to_queue(self->__logger, self->__id, COMPILING);
 	self->__last_compile = get_sim_time(false);
-	usleep(ms_to_useconds(self->__time_to_compile));
+	logger__add_to_queue(self->__logger, self->__id, COMPILING);
+	sleep_ms(self->__time_to_compile);
 	usb__release_safe(self->__left_usb, self);
 	usb__release_safe(self->__right_usb, self);
 	self->__compiles++;
@@ -53,14 +53,14 @@ static inline int	coder__th_compile(t_coder *NONNULL self)
 static inline void	coder__th_debug(t_coder *NONNULL self)
 {
 	logger__add_to_queue(self->__logger, self->__id, DEBUGGING);
-	usleep(ms_to_useconds(self->__time_to_debug));
+	sleep_ms(self->__time_to_debug);
 	self->__state = REFACTOR;
 }
 
 static inline void	coder__th_refactor(t_coder *NONNULL self)
 {
 	logger__add_to_queue(self->__logger, self->__id, REFACTORING);
-	usleep(ms_to_useconds(self->__time_to_refactor));
+	sleep_ms(self->__time_to_refactor);
 	self->__state = COMPILE;
 }
 
